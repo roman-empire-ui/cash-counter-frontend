@@ -1,4 +1,4 @@
-const localhost = 4001
+const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:4001"
 
 
 const genToken = () => {
@@ -31,7 +31,7 @@ const authHeaders = () => {
 export const stockEntry = async ({ date, distributors }) => {
 
     try {
-        const res = await fetch(`http://localhost:${localhost}/api/v1/stock/stockEntry`, {
+        const res = await fetch(`${apiUrl}/api/v1/stock/stockEntry`, {
             method: 'POST',
             headers: authHeaders(),
             body: JSON.stringify({ date, distributors })
@@ -51,7 +51,7 @@ export const stockEntry = async ({ date, distributors }) => {
 
 export const getStocks = async () => {
     try {
-        const res = await fetch(`http://localhost:${localhost}/api/v1/stock/allStocks`, {
+        const res = await fetch(`${apiUrl}/api/v1/stock/allStocks`, {
             method: 'GET',
             headers: authHeaders()
 
@@ -68,7 +68,7 @@ export const getStocks = async () => {
 export const updateStock = async ({ stockId, distributorId, name, totalPaid }) => {
 
     try {
-        const res = await fetch(`http://localhost:${localhost}/api/v1/stock/updateStock/${stockId}/${distributorId}`, {
+        const res = await fetch(`${apiUrl}/api/v1/stock/updateStock/${stockId}/${distributorId}`, {
             method: 'PUT',
             headers: authHeaders(),
 
@@ -89,7 +89,7 @@ export const updateStock = async ({ stockId, distributorId, name, totalPaid }) =
 export const deleteStock = async ({ stockId, distributorId }) => {
 
     try {
-        const res = await fetch(`http://localhost:${localhost}/api/v1/stock/deleteDist/${stockId}/${distributorId}`, {
+        const res = await fetch(`${apiUrl}/api/v1/stock/deleteDist/${stockId}/${distributorId}`, {
             method: 'DELETE',
             headers: authHeaders()
         })
@@ -104,7 +104,7 @@ export const deleteStock = async ({ stockId, distributorId }) => {
 export const calRem = async ({ date, amountHave, stockEntryId }) => {
 
     try {
-        const res = await fetch(`http://localhost:${localhost}/api/v1/stock/remAmount`, {
+        const res = await fetch(`${apiUrl}/api/v1/stock/remAmount`, {
             method: 'POST',
             headers: authHeaders(),
             body: JSON.stringify({ date, amountHave, stockEntryId })
@@ -122,7 +122,7 @@ export const calRem = async ({ date, amountHave, stockEntryId }) => {
 export const getRemAmt = async (stockEntryId) => {
 
     try {
-        const res = await fetch(`http://localhost:${localhost}/api/v1/stock/getRemAmount/${stockEntryId}`, {
+        const res = await fetch(`${apiUrl}/api/v1/stock/getRemAmount/${stockEntryId}`, {
             method: 'GET',
             headers: authHeaders()
         })

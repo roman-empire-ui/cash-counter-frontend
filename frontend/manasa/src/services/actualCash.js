@@ -1,5 +1,5 @@
 // src/services/actualCash.js
-const localhost = 4001;
+const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:4001"
 // const userFromStorage = localStorage.getItem('user');
 // const genToken = () => {
 //   const user = JSON.parse(userFromStorage);
@@ -22,7 +22,7 @@ const localhost = 4001;
 
 export const saveRemCash = async (payload) => {
   try {
-    const res = await fetch(`http://localhost:${localhost}/api/v1/counter/remCash`, {
+    const res = await fetch(`${apiUrl}/api/v1/counter/remCash`, {
       method: "POST",
        ...authHeaders(),
       
@@ -40,7 +40,7 @@ export const saveRemCash = async (payload) => {
 
 export const getRemCash = async (date = null) => {
   try {
-    let url = `http://localhost:${localhost}/api/v1/counter/getRemainingCash`;
+    let url = `${apiUrl}/api/v1/counter/getRemainingCash`;
     if (date) url += `?date=${encodeURIComponent(date)}`;
 
     const res = await fetch(url);

@@ -1,4 +1,5 @@
-const localhost = 4001
+const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:4001"
+
 
 // const userFromStorage = localStorage.getItem('user');
 // const genToken = () => {
@@ -25,7 +26,7 @@ const localhost = 4001
 export const cashCount = async (date ,notes , coins) => {
 
     try {
-        const res = await fetch(`http://localhost:${localhost}/api/v1/counter/initialCount`, {
+        const res = await fetch(`${apiUrl}/api/v1/counter/initialCount`, {
             method : "POST",
             ...authHeaders(),
             body : JSON.stringify({date ,notes , coins})
@@ -45,8 +46,8 @@ export const cashCount = async (date ,notes , coins) => {
 export const getInitialCount = async (date) => {
     try {
 
-        const url = date? `http://localhost:${localhost}/api/v1/counter/getInitial?date=${date}` :
-        `http://localhost:${localhost}/api/v1/counter/getInitial`
+        const url = date? `${apiUrl}/api/v1/counter/getInitial?date=${date}` :
+        `${apiUrl}/api/v1/counter/getInitial`
     
         const res = await fetch(url , {method : 'GET' , ...authHeaders()})
 

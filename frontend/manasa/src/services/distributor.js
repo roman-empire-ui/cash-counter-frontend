@@ -1,4 +1,4 @@
-const localhost = 4001
+const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:4001"
 
 const userFromStorage = localStorage.getItem('user');
 const genToken = () => {
@@ -23,7 +23,7 @@ console.log("Generated token:", genToken());
 
 export const createDistributor = async (name) => {
     try {
-        const res = await fetch(`http://localhost:${localhost}/api/v1/dist/createDist`, {
+        const res = await fetch(`${apiUrl}/api/v1/dist/createDist`, {
             method: 'POST',
              ...authHeaders(),
             body: JSON.stringify({name})
@@ -39,7 +39,7 @@ export const createDistributor = async (name) => {
 export const searchDistributor = async (query) => {
     try {
 
-        const res = await fetch(`http://localhost:${localhost}/api/v1/dist/searchDist?query=${encodeURIComponent(query)}`, {
+        const res = await fetch(`${apiUrl}/api/v1/dist/searchDist?query=${encodeURIComponent(query)}`, {
             method: 'GET',
             ...authHeaders()
 

@@ -1,10 +1,10 @@
 
-const localhost = 4001
+const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:4001"
 
 export const signup = async(userData) =>{
 
     try{
-        const res = await fetch(`http://localhost:${localhost}/api/v1/admin/signin`,{
+        const res = await fetch(`${apiUrl}/api/v1/admin/signin`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -23,7 +23,7 @@ export const signup = async(userData) =>{
 
 export const login = async(userData) => {
     try{
-        const res = await fetch(`http://localhost:${localhost}/api/v1/admin/login`,{
+        const res = await fetch(`${apiUrl}/api/v1/admin/login`,{
             method : 'POST',
             headers : {
                 'Content-Type' : 'application/json'
