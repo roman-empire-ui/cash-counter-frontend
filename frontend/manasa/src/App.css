@@ -1,0 +1,74 @@
+/* Thin Black Scrollbar */
+.scroll-thin-black::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scroll-thin-black::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scroll-thin-black::-webkit-scrollbar-thumb {
+    background-color: black;
+    border-radius: 4px;
+  }
+  .scroll-thin-black {
+    scrollbar-width: thin;
+    scrollbar-color: black transparent;
+  }
+
+
+  @keyframes glow {
+    0% {
+      box-shadow: 0 0 5px #10b981, 0 0 10px #10b981, 0 0 20px #10b981;
+    }
+    50% {
+      box-shadow: 0 0 20px #34d399, 0 0 40px #34d399, 0 0 60px #34d399;
+    }
+    100% {
+      box-shadow: 0 0 5px #10b981, 0 0 10px #10b981, 0 0 20px #10b981;
+    }
+  }
+  
+  .animate-glow {
+    animation: glow 1.5s infinite alternate;
+  }
+  
+
+  /* Shiny glowing underline */
+.shiny-underline {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #00eaff,
+    #00c3ff,
+    transparent
+  );
+  border-radius: 2px;
+  transform: translateX(-50%);
+  transition: width 0.4s ease;
+  box-shadow: 0 0 8px #00eaff, 0 0 12px #00c3ff;
+}
+
+.group:hover .shiny-underline,
+.group:focus .shiny-underline {
+  width: 80%;
+}
+
+/* Keep underline visible for active links */
+.text-blue-300 ~ .shiny-underline {
+  width: 80%;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 2s ease-in-out infinite;
+}
+
+  
