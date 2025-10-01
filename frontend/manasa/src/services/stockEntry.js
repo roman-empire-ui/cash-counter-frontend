@@ -29,7 +29,7 @@ export const stockEntry = async ({ date, distributors }) => {
         const res = await fetch(`${apiUrl}/api/v1/stock/stockEntry`, {
             method: 'POST',
             headers: authHeaders(),
-            credentials : true,
+            credentials : "include",
             body: JSON.stringify({ date, distributors })
         })
 
@@ -48,7 +48,7 @@ export const getStocks = async () => {
         const res = await fetch(`${apiUrl}/api/v1/stock/allStocks`, {
             method: 'GET',
             headers: authHeaders(),
-            credentials : true
+            credentials : 'include'
 
         })
 
