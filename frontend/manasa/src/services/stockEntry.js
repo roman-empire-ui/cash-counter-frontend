@@ -23,11 +23,6 @@ const authHeaders = () => {
 };
 
 
-
-
-
-
-
 export const stockEntry = async ({ date, distributors }) => {
 
     try {
@@ -36,8 +31,6 @@ export const stockEntry = async ({ date, distributors }) => {
             headers: authHeaders(),
             body: JSON.stringify({ date, distributors })
         })
-
-
 
         const data = await res.json()
         console.log('data', data)
