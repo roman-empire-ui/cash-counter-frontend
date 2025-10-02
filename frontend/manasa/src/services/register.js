@@ -37,6 +37,33 @@ export const login = async(userData) => {
 
     } catch(e) {
         console.log('error occured' , e)
+        return {success : false , message :e.message || 'Something went wrong'}
     }
 }
+
+
+ export const resetPassword = async ({email , newPassword , confirmPassword}) => {
+
+    try {
+         const res = await fetch(`${apiUrl}/api/v1/admin/resetPassword`, {
+              method : 'POST',
+              headers : {
+                "Content-Type" : "application/json"
+              },
+              body : JSON.stringify({email , newPassword , confirmPassword})
+        })
+
+
+        const data = await res.json()
+        if(!res.ok) {
+            
+            throw new Error(data.message || 'Password reset failed')
+        }
+
+       
+        return data
+     } catch (e) {
+        console.log('error' , e) 
+}
+ }
 

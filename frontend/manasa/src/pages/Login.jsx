@@ -4,7 +4,7 @@ import { login } from '../services/register';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { GlobalContext } from '../context/globalContext';
-import { Eye, EyeOff } from 'lucide-react'; // 👈 nice icons
+import { Eye, EyeOff } from 'lucide-react';
 
 const initialData = {
   email: '',
@@ -15,7 +15,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState(initialData);
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // 👈 state
+  const [showPassword, setShowPassword] = useState(false);
   const { setIsAuthUser, setUser } = useContext(GlobalContext);
 
   useEffect(() => {
@@ -90,7 +90,7 @@ const Login = () => {
                     type={showPassword ? "text" : "password"}
                     placeholder={field.placeholder}
                     value={userData[field.id]}
-                    className="border rounded-full px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400 pr-10"
+                    className="border-b-2 rounded-full px-3 py-2 w-full focus:outline-none  focus:border-cyan-300 pr-10"
                     onChange={onChange}
                   />
                   <button
@@ -107,18 +107,32 @@ const Login = () => {
                   type={field.type}
                   placeholder={field.placeholder}
                   value={userData[field.id]}
-                  className="border rounded-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="border-b-2 rounded-full px-3 py-2 w-full focus:outline-none  focus:border-cyan-300 pr-10"
                   onChange={onChange}
                 />
               )}
+
+              {field.id === "password" && (
+                <p
+                  className="mt-3 text-sm text-blue-600 hover:underline cursor-pointer text-right"
+                  onClick={() => navigate('/password-reset')}
+                >
+                  Forgot Password?
+                </p>
+              )}
+
             </div>
+
           ))}
+
+
+
+
 
           <button
             type="submit"
-            className={`w-full py-2 rounded-md text-white transition ${
-              loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-            }`}
+            className={`w-full py-2 rounded-md text-white transition ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+              }`}
             disabled={loading}
           >
             {loading ? 'Logging in...' : 'Login'}

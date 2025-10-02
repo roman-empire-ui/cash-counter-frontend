@@ -17,6 +17,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import Notification from './Components/Notification';
 import ErrorPage from './pages/ErrorPage';
 import ProtectedRoute from './context/AuthContext';
+import ResetPassword from './pages/PasswordRst';
 
 const AppRoutes = () => {
   const { loading } = useContext(GlobalContext);
@@ -42,6 +43,8 @@ const AppRoutes = () => {
         <Route path="/" element={<SplashScreen />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path='/password-reset' element ={<ResetPassword/>}/>
+        
 
         {/* Protected Routes */}
         <Route
@@ -50,10 +53,10 @@ const AppRoutes = () => {
             <ProtectedRoute>
               <Home />
             </ProtectedRoute>
-
-
           }
         />
+
+    
         <Route
           path="/stock-entry"
           element={
