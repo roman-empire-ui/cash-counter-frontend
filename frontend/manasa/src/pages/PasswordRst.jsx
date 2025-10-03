@@ -68,7 +68,7 @@ const ResetPassword = () => {
             </label>
             <input
               id="token"
-              type="text"
+              type="password"
               value={formData.token}
               onChange={onChange}
               required
