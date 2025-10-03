@@ -77,9 +77,9 @@ const InitialCash = () => {
         <div className="mt-6 flex justify-center">
           <button
             onClick={() => navigate('/cash-counter')}
-            className="px-5 py-2 bg-emerald-500 text-white rounded-full hover:bg-emerald-600 transition duration-200 font-serif"
+            className="px-5 py-2 bg-emerald-500 text-white rounded-full animate-pulse hover:bg-emerald-600 transition duration-200 font-serif"
           >
-            Back to Cash Counter
+            Back to Opening Balance
           </button>
         </div>
       </div>

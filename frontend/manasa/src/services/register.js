@@ -42,17 +42,17 @@ export const login = async(userData) => {
 }
 
 
- export const resetPassword = async ({email , newPassword , confirmPassword}) => {
-
+export const resetPasswordRequest = async({email}) => {
+    if(!email) return {success : false , message : 'Email is required'}
     try {
-         const res = await fetch(`${apiUrl}/api/v1/admin/resetPassword`, {
-              method : 'POST',
-              headers : {
+        const res = await fetch(`${apiUrl}/api/v1/admin/resetPasswordRequest`, {
+            method : 'POST',
+            headers : {
                 "Content-Type" : "application/json"
-              },
-              body : JSON.stringify({email , newPassword , confirmPassword})
-        })
+            },
 
+            body : JSON.stringify({email})
+        })
 
         const data = await res.json()
         if(!res.ok) {
@@ -60,10 +60,35 @@ export const login = async(userData) => {
             throw new Error(data.message || 'Password reset failed')
         }
 
-       
+       console.log(data)
         return data
-     } catch (e) {
-        console.log('error' , e) 
-}
- }
+    } catch(e) {
+        console.log('error' , e)
+        return {success : false , message : 'Server Error'}
+    }
+} 
+
+export const resetPassword = async ({ token, newPassword, confirmPassword }) => {
+    try {
+      const res = await fetch(`${apiUrl}/api/v1/admin/resetPassword`, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ token, newPassword, confirmPassword })
+      });
+  
+      const data = await res.json();
+  
+      if (!res.ok) {
+        throw new Error(data.message || 'Password reset failed');
+      }
+  
+      return data;
+    } catch (e) {
+      console.error('error', e);
+      return { success: false, message: e.message || 'Something went wrong' }; // return a standard object
+    }
+  };
+  
 

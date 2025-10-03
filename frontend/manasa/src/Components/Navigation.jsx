@@ -37,7 +37,7 @@ const Navigation = () => {
               <img
                 src="/images/logo.jpg"
                 alt="Logo"
-                className="w-54 rounded-full object-cover shadow-md"
+                className="w-[180px] rounded-full object-cover"
               />
               <span className="hidden sm:inline text-center">
                 {" "}

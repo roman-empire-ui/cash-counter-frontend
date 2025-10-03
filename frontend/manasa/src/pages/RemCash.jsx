@@ -34,7 +34,7 @@ const RemainingCash = () => {
   // Companies and extra fields (match backend name paidAmount)
   const [companies, setCompanies] = useState([{ name: "", paidAmount: 0 }]);
   const [posibleOfflineAmount, setPosibleOfflineAmount] = useState(0);
-  const [posibleOnlineAmount , setPosibleOnlineAmount] = useState(0)
+  const [posibleOnlineAmount, setPosibleOnlineAmount] = useState(0)
   const [otherPayments, setOtherPayments] = useState(0);
 
   // merge notes/coins from backend into defaults
@@ -174,7 +174,7 @@ const RemainingCash = () => {
           paidAmount: Number(c.paidAmount) || 0,
         })),
         posibleOfflineAmount: Number(posibleOfflineAmount) || 0,
-        posibleOnlineAmount : Number(posibleOnlineAmount) || 0 ,
+        posibleOnlineAmount: Number(posibleOnlineAmount) || 0,
         otherPayments: Number(otherPayments) || 0,
       };
 
@@ -213,7 +213,7 @@ const RemainingCash = () => {
   const difference = Number(posibleOfflineAmount || 0) - Number(finalTotal || 0);
   const overAllSale = Number(posibleOfflineAmount || 0) + Number(posibleOnlineAmount)
   const cashTotal = Number(cash || 0) + Number(companyPaidTotal || 0)
- 
+
   return (
     <div className="h-screen w-full bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white flex flex-col">
       <header className="p-4 border-b border-white/20 text-center">
@@ -334,14 +334,24 @@ const RemainingCash = () => {
       {/* Footer */}
       <footer className="p-4 border-t border-white/20 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="space-y-1">
-          <div className="text-yellow-400 text-lg  font-mono">Cash Total: ₹{cash}</div>
-          <div className="text-blue-400 text-lg  font-mono">Company Paid: ₹{companyPaidTotal}</div>
-          <div className="text-red-300 text-lg  font-mono">Extra Expenditures: ₹{cashTotal}</div>
+          <div className="text-yellow-400 text-lg ">
+           <span> Cash Total: </span>  ₹{cash}
+           </div>
+          <div className="text-blue-400 text-lg">
+           <span> Company Paid: </span>  ₹{companyPaidTotal}
+           </div>
+          <div className="text-red-300 text-lg">
+            <span>Total cash & company:</span> ₹{cashTotal}
+          </div>
 
-          <div className="text-green-400 text-xl  font-mono">Final Total: ₹{finalTotal}</div>
-          <div className="text-green-300 text-xl  font-mono">Overall Sales: ₹{overAllSale}</div>
-          <div className="text-blue-400 text-lg  font-mono">Difference: ₹{difference}</div>
-          <div className={`text-xl font-bold font-mono ${difference <= 0 ? "text-green-400" : "text-red-400"}`}>
+          <div className="text-green-400 text-xl">
+          <span> Final Total: </span> ₹{finalTotal}
+          </div>
+          <div className="text-green-300 text-xl">
+            <span> Overall Sales: </span> ₹{overAllSale}</div>
+          <div className="text-blue-400 text-lg"> 
+            <span> Difference: </span> ₹{difference}</div>
+          <div className={`text-xl ${difference <= 0 ? "text-green-400" : "text-red-400"}`}>
             Profit/Loss: ₹{difference}
             {finalTotal === posibleOfflineAmount
               ? "No loss 😐"
@@ -352,13 +362,13 @@ const RemainingCash = () => {
         </div>
 
         <button onClick={handleSubmit} disabled={loading}
-          className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 transition text-white rounded-full shadow-lg flex items-center gap-2 font-serif animate-glow">
+          className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 transition text-white rounded-full shadow-lg flex items-center gap-2  animate-glow">
           {loading && <Loader2 className="animate-spin" size={18} />}
           {loading ? "Saving..." : "Save Entry"}
         </button>
       </footer>
 
-      <Notification/>
+      <Notification />
     </div>
   );
 };

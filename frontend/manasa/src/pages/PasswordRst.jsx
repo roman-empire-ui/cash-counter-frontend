@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { resetPassword } from "../services/register";
 
 const initialData = {
-  email: "",
+  token: "",
   newPassword: "",
   confirmPassword: "",
 };
@@ -13,6 +13,15 @@ const ResetPassword = () => {
   const [formData, setFormData] = useState(initialData);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams(); // get query params
+
+  // Get token from URL and set it in state
+  useEffect(() => {
+    const tokenFromUrl = searchParams.get("token");
+    if (tokenFromUrl) {
+      setFormData((prev) => ({ ...prev, token: tokenFromUrl }));
+    }
+  }, [searchParams]);
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -22,45 +31,31 @@ const ResetPassword = () => {
     e.preventDefault();
     setLoading(true);
 
-    
-
     if (formData.newPassword !== formData.confirmPassword) {
       toast.error("Passwords do not match!");
       setLoading(false);
       return;
     }
 
-    try{
-        const reset = await resetPassword({
-          email : formData.email,
-          newPassword : formData.newPassword,
-          confirmPassword : formData.confirmPassword
-        })
+    try {
+      const reset = await resetPassword(formData);
 
-        if(reset.success) {
-          toast.success(reset.message || 'Password has been reset')
-          navigate('/login')
-        } else {
-          toast.error(reset.message || 'Reset failed')
-        }
-    } catch(e) {
-      console.log('error' , e)
-      toast.error(e.message || "Something went wrong")
-    }finally {
-      setLoading(false)
+      if (reset.success) {
+        toast.success(reset.message || "Password has been reset");
+        navigate("/login");
+      } else {
+        toast.error(reset.message || "Reset failed");
+      }
+    } catch (e) {
+      console.log("error", e);
+      toast.error(e.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
-      
   };
 
   return (
-    <div
-      className="min-h-screen w-full bg-no-repeat bg-cover bg-center bg-gray-300 flex items-center justify-center p-4"
-      style={{
-        backgroundImage: "url(/images/bg.jpg)",
-        backgroundPosition: "center",
-        backgroundSize: "cover",
-      }}
-    >
+    <div className="min-h-screen w-full bg-no-repeat bg-cover bg-center bg-gray-300 flex items-center justify-center p-4">
       <div className="bg-white/30 backdrop-blur-md shadow-md rounded-lg p-8 w-full max-w-md">
         <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">
           Reset Password
@@ -68,25 +63,21 @@ const ResetPassword = () => {
 
         <form className="space-y-5" onSubmit={handleSubmit}>
           <div className="flex flex-col">
-            <label htmlFor="email" className="mb-1 font-medium text-gray-700">
-              Email
+            <label htmlFor="token" className="mb-1 font-medium text-gray-700">
+              Token
             </label>
             <input
-              id="email"
-              type="email"
-              placeholder="Enter your email"
-              value={formData.email}
+              id="token"
+              type="text"
+              value={formData.token}
               onChange={onChange}
               required
-              className="border-b-2 rounded-full px-3 py-2 focus:outline-none  focus:border-blue-400"
+              className="border-b-2 rounded-full px-3 py-2 focus:outline-none focus:border-blue-400"
             />
           </div>
 
           <div className="flex flex-col">
-            <label
-              htmlFor="newPassword"
-              className="mb-1 font-medium text-gray-700"
-            >
+            <label htmlFor="newPassword" className="mb-1 font-medium text-gray-700">
               New Password
             </label>
             <input
@@ -94,18 +85,14 @@ const ResetPassword = () => {
               type="password"
               placeholder="Enter new password"
               value={formData.newPassword}
-
               onChange={onChange}
               required
-              className="border-b-2 rounded-full px-3 py-2 focus:outline-none  focus:border-blue-400"
+              className="border-b-2 rounded-full px-3 py-2 focus:outline-none focus:border-blue-400"
             />
           </div>
 
           <div className="flex flex-col">
-            <label
-              htmlFor="confirmPassword"
-              className="mb-1 font-medium text-gray-700"
-            >
+            <label htmlFor="confirmPassword" className="mb-1 font-medium text-gray-700">
               Confirm New Password
             </label>
             <input
@@ -115,7 +102,7 @@ const ResetPassword = () => {
               value={formData.confirmPassword}
               onChange={onChange}
               required
-              className="border-b-2 rounded-full px-3 py-2 focus:outline-none  focus:border-blue-400"
+              className="border-b-2 rounded-full px-3 py-2 focus:outline-none focus:border-blue-400"
             />
           </div>
 

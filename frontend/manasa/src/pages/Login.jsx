@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { GlobalContext } from '../context/globalContext';
 import { Eye, EyeOff } from 'lucide-react';
+import ResetPasswordModal from '../Components/TokenReq';
 
 const initialData = {
   email: '',
@@ -17,6 +18,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { setIsAuthUser, setUser } = useContext(GlobalContext);
+  const [isModalOpen , setIsModalOpen] = useState(false)
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -61,6 +63,8 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+
 
   return (
     <div
@@ -115,7 +119,7 @@ const Login = () => {
               {field.id === "password" && (
                 <p
                   className="mt-3 text-sm text-blue-600 hover:underline cursor-pointer text-right"
-                  onClick={() => navigate('/password-reset')}
+                  onClick={() => setIsModalOpen(true)}
                 >
                   Forgot Password?
                 </p>
@@ -124,10 +128,6 @@ const Login = () => {
             </div>
 
           ))}
-
-
-
-
 
           <button
             type="submit"
@@ -149,6 +149,7 @@ const Login = () => {
           </span>
         </p>
       </div>
+      <ResetPasswordModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };

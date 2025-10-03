@@ -218,7 +218,7 @@ const StockEntry = () => {
       <div className="max-w-5xl mx-auto space-y-8">
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <h1 className="text-2xl sm:text-3xl font-extrabold text-green-400 font-serif animate-bounce">
-            📦 Daily Stock Entry
+             Daily Stock Payments
           </h1>
           <span className="text-sm text-gray-400">
             Track suppliers & expenses with ease
