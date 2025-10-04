@@ -13,8 +13,6 @@ import InitialCash from './pages/InitialCash';
 import CashSummary from './pages/CashSummary';
 import SplashScreen from './Components/Splash';
 import LogoOverlay from './Components/ImageOverlay';
-import { ThemeProvider } from './context/ThemeContext';
-import Notification from './Components/Notification';
 import ErrorPage from './pages/ErrorPage';
 import ProtectedRoute from './context/AuthContext';
 import ResetPassword from './pages/PasswordRst';
@@ -113,7 +111,7 @@ function App() {
         <div>
           <AppRoutes />
           <LogoOverlay />
-          <Notification />
+          
         </div>
       </BrowserRouter>
     </GlobalState>

@@ -15,7 +15,7 @@ export const signup = async(userData) =>{
         })
         const data = await res.json()
         console.log('Sign in success' , data)
-        return data
+        return {success : true  , data}
     } catch (e) {
         console.log('error', e)
     }
