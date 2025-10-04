@@ -61,7 +61,7 @@ const Signup = () => {
                 id={field.id}
                 type={field.type}
                 placeholder={field.placeholder}
-                className="border rounded-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="border-b-2 rounded-full px-3 py-2 focus:outline-none  focus:border-blue-400"
                 onChange={onChange}
                 value={userData[field.id]}
               />
