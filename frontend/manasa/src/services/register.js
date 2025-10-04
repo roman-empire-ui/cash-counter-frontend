@@ -1,5 +1,5 @@
 
-const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:4001"
+const apiUrl = import.meta.env.VITE_API_BASE_URL || ""
 
 export const signup = async(userData) =>{
 
