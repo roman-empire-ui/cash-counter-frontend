@@ -39,7 +39,7 @@ const Login = () => {
       const data = await login(userData);
 
       if (data.success) {
-        toast.success( 'Logged in successfully!');
+        toast.success(data.message || "Logged in successfully...!");
 
         const fullUser = {
           ...data.user,

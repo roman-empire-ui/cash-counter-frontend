@@ -9,7 +9,7 @@ const Notification = () => {
 
     return (
         <ToastContainer
-            position='top-right'
+            position='bottom-center'
             autoClose={3000}
             hideProgressBar={false}
             newestOnTop={false}
@@ -17,7 +17,7 @@ const Notification = () => {
             pauseOnFocusLoss
             draggable
             pauseOnHover
-            theme='light'
+            theme='dark'
             rtl={false}
         />
     )

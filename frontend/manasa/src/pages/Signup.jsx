@@ -25,12 +25,12 @@ const Signup = () => {
     e.preventDefault()
     const data = await signup(userData)
     if (data.success) {
-      toast.success(data.message, { position: 'top-right' })
+      toast.success(data.message)
       setIsRegistered(true)
       setUserData(initialData)
       navigate('/login')
     } else {
-      toast.error(data.message, { position: 'top-right' })
+      toast.error(data.message)
       setUserData(initialData)
     }
   }
