@@ -15,6 +15,7 @@ const ResetPasswordModal = ({ isOpen, onClose }) => {
 
     try {
       const res = await resetPasswordRequest({ email });
+      console.log("resetPasswordRequest response:", res);
 
       if (res.success) {
         toast.success("Reset link has been sent to your email!");
