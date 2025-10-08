@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { X } from "lucide-react";
 import { toast } from "react-toastify";
 import { resetPasswordRequest } from "../services/register";
+import Lottie from 'lottie-react'
+import forgot from '../assets/forgot.json'
 
 const ResetPasswordModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState("");
@@ -35,6 +37,17 @@ const ResetPasswordModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center z-50">
+          <Lottie animationData={forgot} loop className="w-52 h-52" />
+          <p className="text-white mt-3 text-lg font-medium">
+            Sending reset link...
+          </p>
+        </div>
+      )}
+
+      {/* Modal Box */}
       <div className="relative bg-white/30 backdrop-blur-md shadow-md rounded-lg p-8 w-full max-w-md">
         {/* Close button */}
         <button

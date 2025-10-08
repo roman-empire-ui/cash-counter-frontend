@@ -78,4 +78,19 @@ html, body {
   animation: float 2s ease-in-out infinite;
 }
 
+
+/* Make all toast messages wider */
+.Toastify__toast {
+  min-width: 400px; /* default is around 320px */
+  max-width: 90vw;  /* prevents it from overflowing on smaller screens */
+}
+
+/* Optional: make the text more readable for long messages */
+.Toastify__toast-body {
+  font-size: 15px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+
   

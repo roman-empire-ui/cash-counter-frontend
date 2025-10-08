@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
+import Lottie from 'lottie-react'
+import loading2 from '../assets/loading2.json'
 import { getInitialCount } from '../services/cashCounter';
 
 const InitialCash = () => {
@@ -12,7 +14,6 @@ const InitialCash = () => {
     const fetchCash = async () => {
       setLoading(true);
       const initialCash = await getInitialCount();
-      console.log('frontend',  initialCash)
       if (initialCash?.success) setInitial(initialCash?.initialCash);
       setLoading(false);
     };
@@ -28,7 +29,7 @@ const InitialCash = () => {
 
         {loading ? (
           <div className="flex justify-center items-center py-10">
-            <Loader2 className="animate-spin text-white" size={28} />
+            <Lottie animationData={loading2} loop className="w-50 h-48" />
           </div>
         ) : initial ? (
           <div className="grid grid-cols-2 gap-6">
