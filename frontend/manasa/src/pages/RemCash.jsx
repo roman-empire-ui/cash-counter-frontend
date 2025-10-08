@@ -183,10 +183,14 @@ const RemainingCash = () => {
     0
   );
   const difference = Number(posibleOfflineAmount || 0) - Number(finalTotal || 0);
-  const overAllSale =
-    Number(posibleOfflineAmount || 0) + Number(posibleOnlineAmount);
+  const overAllSale = Number(posibleOfflineAmount || 0) + Number(posibleOnlineAmount);
   const cashTotal = Number(cash || 0) + Number(companyPaidTotal || 0);
   const overallCashTotal = cashTotal + Number(paytm || 0) + Number(card || 0);
+  
+  const formatAmount = (value) => {
+    if (value === null || value === undefined || isNaN(value)) return "0";
+    return value.toLocaleString("en-IN");
+  };
 
   return (
     <div className="h-screen w-full bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white flex flex-col relative">
@@ -350,25 +354,25 @@ const RemainingCash = () => {
 
       <footer className="p-4 border-t border-white/20 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="space-y-1 text-sm">
-          <div className="text-yellow-400 text-lg">Cash Total: ₹{cash}</div>
-          <div className="text-yellow-400 text-lg">Paytm: ₹{paytm}</div>
-          <div className="text-yellow-400 text-lg">Card: ₹{card}</div>
-          <div className="text-yellow-400 text-lg">Company Paid: ₹{companyPaidTotal}</div>
-          <div className="text-yellow-300 text-lg">Total cash & company: ₹{cashTotal}</div>
+          <div className="text-yellow-400 text-lg">Cash Total: ₹{formatAmount(cash)}</div>
+          <div className="text-yellow-400 text-lg">Paytm: ₹{formatAmount(paytm)}</div>
+          <div className="text-yellow-400 text-lg">Card: ₹{formatAmount(card)}</div>
+          <div className="text-yellow-400 text-lg">Company Paid: ₹{formatAmount(companyPaidTotal)}</div>
+          <div className="text-yellow-300 text-lg">Total cash & company: ₹{formatAmount(cashTotal)}</div>
           <div className="text-green-400 text-lg">
-            Overall Cash Total: ₹{overallCashTotal}
+            Overall Cash Total: ₹{formatAmount(overallCashTotal)}
           </div>
           <div className="text-green-400 text-lg">
-            Final Total(-OPB): ₹{finalTotal}
+            Final Total(-OPB): ₹{formatAmount(finalTotal)}
           </div>
-          <div className="text-green-300 text-lg">Overall Sales: ₹{overAllSale}</div>
-          <div className="text-blue-400 text-lg">Difference: ₹{difference}</div>
+          <div className="text-green-300 text-lg">Overall Sales: ₹{formatAmount(overAllSale)}</div>
+          <div className="text-blue-400 text-lg">Difference: ₹{formatAmount(difference)}</div>
           <div
             className={`text-xl ${
               difference <= 0 ? "text-green-400" : "text-red-400"
             }`}
           >
-             Profit/Loss: ₹{difference}
+             Profit/Loss: ₹{formatAmount(difference)}
             {finalTotal === posibleOfflineAmount
               ? "No Loss 😐"
               : finalTotal < posibleOfflineAmount
