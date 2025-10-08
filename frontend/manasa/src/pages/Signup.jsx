@@ -43,7 +43,7 @@ const Signup = () => {
 
   return (
     <div 
-      className="h-screen w-full flex items-center justify-center bg-gray-300 bg-no-repeat bg-cover bg-center overflow-y-auto"
+      className="min-h-screen w-full flex items-center justify-center bg-gray-300 bg-no-repeat bg-cover bg-center py-10"
       style={{ backgroundImage: 'url(/images/bg.jpg)' }}
     >
       <div className="bg-white/30 backdrop-blur-md shadow-md rounded-lg p-8 w-full max-w-md max-h-[calc(100vh-2rem)] overflow-y-auto">

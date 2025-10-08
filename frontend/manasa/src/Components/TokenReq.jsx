@@ -74,7 +74,7 @@ const ResetPasswordModal = ({ isOpen, onClose }) => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
               required
-              className="border-b-2 rounded-full px-3 py-2 focus:outline-none focus:border-blue-400 bg-white/70"
+              className="border-b-2 rounded-full px-3 py-2 focus:outline-none focus:border-blue-400"
             />
           </div>
 
