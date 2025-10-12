@@ -16,6 +16,7 @@ import LogoOverlay from './Components/ImageOverlay';
 import ErrorPage from './pages/ErrorPage';
 import ProtectedRoute from './context/AuthContext';
 import ResetPassword from './pages/PasswordRst';
+import SpeechAssistant from './pages/Speech';
 
 const AppRoutes = () => {
   const { loading } = useContext(GlobalContext);
@@ -42,6 +43,7 @@ const AppRoutes = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path='/password-reset' element ={<ResetPassword/>}/>
+        <Route path='/speech' element={<SpeechAssistant/>}/>
         
 
         {/* Protected Routes */}

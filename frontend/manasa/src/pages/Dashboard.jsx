@@ -30,6 +30,13 @@ const Dashboard = () => {
           >
             Initial Cash Counter
           </button>
+
+          <button
+            onClick={() => navigate('/speech')}
+            className="transition-transform duration-300 transform hover:scale-105 bg-purple-600 text-white py-3 px-6 rounded-full shadow-md hover:bg-purple-700"
+          >
+            Speech Change Manager
+          </button>
         </div>
       </div>
     </div>
