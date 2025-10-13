@@ -10,7 +10,8 @@ import {
   X,
 } from "lucide-react";
 import { createHand, getHandovers, deleteHand } from "../services/speech";
-
+import Lottie from "lottie-react";
+import ham from '../assets/ham.json'
 const SpeechAssistant = () => {
   const [message, setMessage] = useState("");
   const [response, setResponse] = useState("");
@@ -207,7 +208,12 @@ const SpeechAssistant = () => {
           Saved Handovers
         </h2>
         {handovers.length === 0 ? (
-          <p className="text-gray-400">No handovers yet.</p>
+           <div className="flex flex-col items-center justify-center py-12">
+           <Lottie animationData={ham} loop={true} className="w-70 h-70" />
+           <p className="text-gray-400 mt-4 text-lg">
+             No handovers yet. Try speaking to add one!
+           </p>
+         </div>
         ) : (
           <table className="w-full text-left border-collapse text-white">
             <thead>
