@@ -5,7 +5,7 @@ import Notification from '../Components/Notification';
 
 const CashSummary = () => {
   return (
-    <div className="min-h-screen bg-black text-white px-4 py-8 bg-cover bg-no-repeat bg-center"
+    <div className="min-h-screen bg-black text-white px-4 py-8 bg-cover bg-no-repeat bg-center bg-fixed"
     style={{backgroundImage : 'url(/images/neon2.jpg)'}}
     >
       <h1 className="text-3xl font-bold text-center mb-8 animate-float">Daily Cash Summary</h1>

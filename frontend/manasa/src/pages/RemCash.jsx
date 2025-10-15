@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { Loader2, Search, RefreshCw, PlusCircle, Trash2 } from "lucide-react";
 import { saveRemCash, getRemCash } from "../services/actualCash";
 import Lottie from "lottie-react";
-import loading1 from "../assets/loading1.json"; // Lottie animation
+import loading2 from "../assets/loading2.json"; // Lottie animation
 import Notification from "../Components/Notification";
 
 // Default denominations
@@ -193,13 +193,13 @@ const RemainingCash = () => {
   };
 
   return (
-    <div className="h-screen w-full bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white flex flex-col relative bg-cover"
-    style={{backgroundImage : 'url(/images/neon6.jpg)'}}
+    <div className="h-screen w-full bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white flex flex-col relative"
+    
     >
       {/* Lottie overlay for saving/fetching */}
       {loading && (
         <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center z-50">
-          <Lottie animationData={loading1} loop className="w-48 h-48" />
+          <Lottie animationData={loading2} loop className="w-50 h-50" />
           <p className="text-white mt-3 text-lg font-medium">
             Processing, please wait...
           </p>

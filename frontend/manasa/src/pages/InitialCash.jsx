@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
 import Lottie from 'lottie-react'
 import loading2 from '../assets/loading2.json'
 import { getInitialCount } from '../services/cashCounter';
@@ -21,8 +20,8 @@ const InitialCash = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-600 via-indigo-600 to-purple-800 p-6 bg-cover bg-no-repeat bg-center"
-    style={{backgroundImage : 'url(/images/neon2.jpg)'}}
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-600 via-indigo-600 to-purple-800 p-6"
+    
     >
       <div className="w-full max-w-3xl bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl p-6">
         <h2 className="text-2xl font-bold text-white mb-6 text-center font-serif">
