@@ -231,7 +231,7 @@ const StockEntry = () => {
         </header>
 
         {/* Stock Form */}
-        <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-lg p-4 sm:p-6 space-y-6">
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-lg p-4 sm:p-6 space-y-6">
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-300">
@@ -280,7 +280,7 @@ const StockEntry = () => {
                       <li
                         key={idx}
                         className="p-2 cursor-pointer hover:bg-gray-600"
-                        onMouseDown={() => selectSuggestion(i, s)} // ✅ fills input when clicked
+                        onKeyDown={() => selectSuggestion(i, s)} // ✅ fills input when clicked
                       >
                         {s}
                       </li>
@@ -328,7 +328,7 @@ const StockEntry = () => {
         </div>
 
         {/* Stock Summary */}
-        <div ref={summaryRef} className="bg-white/5 rounded-2xl p-6">
+        <div ref={summaryRef} className="bg-white/5 backdrop-blur-sm rounded-2xl p-6">
           <h2 className="text-xl font-bold text-emerald-400 mb-4 animate-bounce">
              Stock Summary
           </h2>
