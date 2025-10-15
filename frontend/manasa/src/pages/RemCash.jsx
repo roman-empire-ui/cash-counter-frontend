@@ -193,7 +193,9 @@ const RemainingCash = () => {
   };
 
   return (
-    <div className="h-screen w-full bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white flex flex-col relative">
+    <div className="h-screen w-full bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white flex flex-col relative bg-cover"
+    style={{backgroundImage : 'url(/images/neon6.jpg)'}}
+    >
       {/* Lottie overlay for saving/fetching */}
       {loading && (
         <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center z-50">
@@ -384,7 +386,7 @@ const RemainingCash = () => {
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full flex items-center gap-2"
+          className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full flex items-center gap-2 animate-glow"
         >
           {loading && <Loader2 className="animate-spin" size={18} />}
           {loading ? "Saving..." : "Save Entry"}

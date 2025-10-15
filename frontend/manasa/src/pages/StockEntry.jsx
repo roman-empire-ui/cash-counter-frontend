@@ -23,7 +23,6 @@ const StockEntry = () => {
   const [amountHave, setAmountHave] = useState('');
   const [remainingAmount, setRemainingAmount] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [pincode, setPincode] = useState('')
   const [paytm, setPaytm] = useState('')
   const [companies, setCompanies] = useState([{ name: '', amount: '' }])
   const summaryRef = useRef(null);
@@ -207,14 +206,20 @@ const StockEntry = () => {
   const totalCompanies = companies.reduce((sum, c) => sum + Number(c.amount || 0), 0)
   const finalTotal =
     Number(remainingAmount || 0) +
-    Number(pincode || 0) +
     Number(paytm || 0) +
     totalCompanies
 
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 to-black text-white p-4 sm:p-6 md:p-8 font-serif">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 to-black text-white p-4 sm:p-6 md:p-8 font-serif"
+    style={{backgroundImage : 'url(/images/neon8.jpg)',
+      backgroundSize: "cover",         
+      backgroundPosition: "center",    
+      backgroundRepeat: "no-repeat",   
+      backgroundAttachment: "fixed",   
+      backgroundColor: "#000",}}
+    >
       <div className="max-w-5xl mx-auto space-y-8">
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <h1 className="text-2xl sm:text-3xl font-extrabold text-green-400 font-serif animate-bounce">
@@ -465,13 +470,6 @@ const StockEntry = () => {
 
                 {/* Pincode & Paytm */}
                 <div className="grid sm:grid-cols-2 gap-4">
-                  <input
-                    type="number"
-                    placeholder="Pincode ₹"
-                    value={pincode}
-                    onChange={(e) => setPincode(e.target.value)}
-                    className="p-3 rounded-md bg-black/30 border border-gray-700 text-white font-mono"
-                  />
                  
                   <input
                     type="number"
