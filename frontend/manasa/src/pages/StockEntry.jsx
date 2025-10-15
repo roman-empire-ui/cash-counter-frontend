@@ -212,14 +212,7 @@ const StockEntry = () => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 to-black text-white p-4 sm:p-6 md:p-8 font-serif"
-    style={{backgroundImage : 'url(/images/neon8.jpg)',
-      backgroundSize: "cover",         
-      backgroundPosition: "center",    
-      backgroundRepeat: "no-repeat",   
-      backgroundAttachment: "fixed",   
-      backgroundColor: "#000",}}
-    >
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 to-black text-white p-4 sm:p-6 md:p-8 font-serif">
       <div className="max-w-5xl mx-auto space-y-8">
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <h1 className="text-2xl sm:text-3xl font-extrabold text-green-400 font-serif animate-bounce">
