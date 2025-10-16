@@ -77,7 +77,7 @@ const SpeechAssistant = () => {
       changeReturned,
       netAmount,
       givenTo: toMatch ? toMatch[1] : "",
-      reason ,
+      reason,
     };
   };
 
@@ -162,16 +162,15 @@ const SpeechAssistant = () => {
       {/* Left: Speech input */}
       <div className="p-6 rounded-3xl backdrop-blur-md bg-white/10 shadow-2xl border border-white/10 flex flex-col items-center">
         <h1 className="text-4xl font-extrabold text-yellow-400 mb-6 text-center">
-          💬 Voice Cash Counter
+           Voice Cash Counter
         </h1>
 
         <button
           onClick={toggleListening}
-          className={`relative w-28 h-28 flex items-center justify-center rounded-full border-6 transition-all duration-300 ${
-            isListening
+          className={`relative w-28 h-28 flex items-center justify-center rounded-full border-6 transition-all duration-300 ${isListening
               ? "border-yellow-400 bg-yellow-500/20 scale-110 shadow-[0_0_30px_rgba(250,204,21,0.7)]"
               : "border-gray-500 bg-gray-800 hover:border-yellow-400 hover:scale-105"
-          }`}
+            }`}
         >
           {status === "loading" ? (
             <Loader2 className="animate-spin w-12 h-12 text-yellow-400" />
@@ -208,12 +207,12 @@ const SpeechAssistant = () => {
           Saved Handovers
         </h2>
         {handovers.length === 0 ? (
-           <div className="flex flex-col items-center justify-center py-12">
-           <Lottie animationData={ham} loop={true} className="w-70 h-70" />
-           <p className="text-gray-400 mt-4 text-lg">
-             No handovers yet. Try speaking to add one!
-           </p>
-         </div>
+          <div className="flex flex-col items-center justify-center py-12">
+            <Lottie animationData={ham} loop={true} className="w-70 h-70" />
+            <p className="text-gray-400 mt-4 text-lg">
+              No handovers yet. Try speaking to add one!
+            </p>
+          </div>
         ) : (
           <table className="w-full text-left border-collapse text-white">
             <thead>
@@ -228,28 +227,42 @@ const SpeechAssistant = () => {
               </tr>
             </thead>
             <tbody>
-              {handovers.map((h) => (
-                <tr
-                  key={h._id}
-                  className="border-b border-white/10 group hover:bg-white/5 transition"
-                >
-                  <td className="px-2 py-1">{h.date}</td>
-                  <td className="px-2 py-1">{h.givenTo || "—"}</td>
-                  <td className="px-2 py-1">₹{h.amountGiven}</td>
-                  <td className="px-2 py-1">₹{h.changeReturned}</td>
-                  <td className="px-2 py-1">₹{h.netAmount}</td>
-                  <td className="px-2 py-1">{h.reason}</td>
-                  <td className="px-2 py-1 text-right">
-                    <button
-                      onClick={() => confirmDelete(h._id)}
-                      className="hidden group-hover:inline-flex items-center justify-center text-red-400 hover:text-red-600 transition"
+              {handovers.map((h) => {
+                const today = new Date().toISOString().split("T")[0];
+                const isToday = h.date?.startsWith(today);
+
+                return (
+                  <tr
+                    key={h._id}
+                    className={`border-b border-white/10 group transition ${isToday
+                        ? "bg-gradient-to-r from-yellow-500/20 to-yellow-300/10 shadow-[0_0_10px_rgba(250,204,21,0.3)]"
+                        : "hover:bg-white/5"
+                      }`}
+                  >
+                    <td
+                      className={`px-2 py-1 ${isToday ? "text-yellow-400 font-semibold" : "text-white"
+                        }`}
                     >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                      {h.date}
+                    </td>
+                    <td className="px-2 py-1">{h.givenTo || "—"}</td>
+                    <td className="px-2 py-1">₹{h.amountGiven}</td>
+                    <td className="px-2 py-1">₹{h.changeReturned}</td>
+                    <td className="px-2 py-1">₹{h.netAmount}</td>
+                    <td className="px-2 py-1">{h.reason}</td>
+                    <td className="px-2 py-1 text-right">
+                      <button
+                        onClick={() => confirmDelete(h._id)}
+                        className="hidden group-hover:inline-flex items-center justify-center text-red-400 hover:text-red-600 transition"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
+
           </table>
         )}
       </div>
