@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { deleteStock, getStocks, updateStock } from "../services/stockEntry";
 import { toast } from "react-toastify";
 import { Pencil, Trash2 } from "lucide-react";
+import Lottie from "lottie-react";
+import loader from '../assets/loader.json'
 
 const AllStocks = () => {
   const [allStocks, setAllStocks] = useState([]);
@@ -12,9 +14,11 @@ const AllStocks = () => {
   // Editing state
   const [editingDistributor, setEditingDistributor] = useState(null);
   const [editValues, setEditValues] = useState({ name: "", totalPaid: "" });
+  const [isLoading , setIsLoading] = useState(true)
 
   useEffect(() => {
     const fetchStocks = async () => {
+      setIsLoading(true)
       const res = await getStocks();
       if (res.success) {
         setAllStocks(res.data);
@@ -22,6 +26,7 @@ const AllStocks = () => {
       } else {
         toast.error(res.message || "Failed to load stocks");
       }
+      setIsLoading(false)
     };
 
     fetchStocks();
@@ -167,7 +172,15 @@ const AllStocks = () => {
       console.error(err);
       toast.error("Something went wrong while deleting");
     }
-  };
+  }; 
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-black">
+        <Lottie animationData={loader} loop={true} className="w-50 h-50" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 min-h-screen font-inter bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white">

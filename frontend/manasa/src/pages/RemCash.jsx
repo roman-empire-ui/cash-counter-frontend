@@ -6,6 +6,7 @@ import { saveRemCash, getRemCash } from "../services/actualCash";
 import Lottie from "lottie-react";
 import loading2 from "../assets/loading2.json"; // Lottie animation
 import Notification from "../Components/Notification";
+import { useNavigate } from "react-router-dom";
 
 // Default denominations
 const defaultNotes = [500, 200, 100, 50, 20, 10].map((denom) => ({
@@ -35,6 +36,7 @@ const RemainingCash = () => {
   const [finalTotal, setFinalTotal] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  const navigate = useNavigate()
   // merge notes/coins from backend into defaults
   const mergeWithDefaults = (saved = [], defaults = []) =>
     defaults.map((d) => {
@@ -84,7 +86,7 @@ const RemainingCash = () => {
         populateFromBackend(result[0]);
       }
     } catch (err) {
-      toast.error( err.message || "Failed to load latest remaining cash");
+      toast.error(err.message || "Failed to load latest remaining cash");
     } finally {
       setLoading(false);
     }
@@ -147,7 +149,7 @@ const RemainingCash = () => {
 
   const handleSubmit = async () => {
     setLoading(true);
-    
+
     try {
       const payload = {
         date,
@@ -165,7 +167,7 @@ const RemainingCash = () => {
       };
       const res = await saveRemCash(payload);
       if (res?.success) {
-        toast.success( res.message ||"Saved successfully");
+        toast.success(res.message || "Saved successfully");
         setLoading(true)
         await fetchLatest();
       } else toast.error("Error saving remaining cash");
@@ -186,7 +188,7 @@ const RemainingCash = () => {
   const overAllSale = Number(posibleOfflineAmount || 0) + Number(posibleOnlineAmount);
   const cashTotal = Number(cash || 0) + Number(companyPaidTotal || 0);
   const overallCashTotal = cashTotal + Number(paytm || 0) + Number(card || 0);
-  
+
   const formatAmount = (value) => {
     if (value === null || value === undefined || isNaN(value)) return "0";
     return value.toLocaleString("en-IN");
@@ -194,7 +196,7 @@ const RemainingCash = () => {
 
   return (
     <div className="h-screen w-full bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white flex flex-col relative"
-    
+
     >
       {/* Lottie overlay for saving/fetching */}
       {loading && (
@@ -229,11 +231,11 @@ const RemainingCash = () => {
             {notes.map((note, idx) => (
               <div key={note.denomination} className="flex flex-col bg-white/10 rounded-lg p-3 items-center text-white">
                 <span className="font-medium mb-2">₹{note.denomination}</span>
-                <input type="number" 
-                value={note.count} 
-                onChange={(e) => handleCountChange("notes", idx, e.target.value)}
-                onWheel={disableScroll}
-                className="w-20 px-2 py-1 rounded bg-white/20 text-white outline-none border border-white/30 text-center" />
+                <input type="number"
+                  value={note.count}
+                  onChange={(e) => handleCountChange("notes", idx, e.target.value)}
+                  onWheel={disableScroll}
+                  className="w-20 px-2 py-1 rounded bg-white/20 text-white outline-none border border-white/30 text-center" />
               </div>
             ))}
           </div>
@@ -246,11 +248,11 @@ const RemainingCash = () => {
             {coins.map((coin, idx) => (
               <div key={coin.denomination} className="flex flex-col bg-white/10 rounded-lg p-3 items-center text-white">
                 <span className="font-medium mb-2">₹{coin.denomination}</span>
-                <input type="number" 
-                value={coin.count} 
-                onChange={(e) => handleCountChange("coins", idx, e.target.value)}
-                onWheel={disableScroll}
-                className="w-20 px-2 py-1 rounded bg-white/20 text-white outline-none border border-white/30 text-center" />
+                <input type="number"
+                  value={coin.count}
+                  onChange={(e) => handleCountChange("coins", idx, e.target.value)}
+                  onWheel={disableScroll}
+                  className="w-20 px-2 py-1 rounded bg-white/20 text-white outline-none border border-white/30 text-center" />
               </div>
             ))}
           </div>
@@ -261,16 +263,16 @@ const RemainingCash = () => {
           <h3 className="text-lg font-semibold text-indigo-200 mb-3">Companies Paid</h3>
           {companies.map((c, idx) => (
             <div key={idx} className="flex gap-3 mb-2 items-center">
-              <input type="text" 
-              placeholder="Company Name" 
-              value={c.name} onChange={(e) => updateCompany(idx, "name", e.target.value)}
-              onWheel={disableScroll}
-              className="flex-1 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30" />
-              <input type="number" 
-              placeholder="Paid" value={c.paidAmount} 
-              onChange={(e) => updateCompany(idx, "paidAmount", e.target.value)}
-              onWheel={disableScroll}
-              className="w-32 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30" />
+              <input type="text"
+                placeholder="Company Name"
+                value={c.name} onChange={(e) => updateCompany(idx, "name", e.target.value)}
+                onWheel={disableScroll}
+                className="flex-1 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30" />
+              <input type="number"
+                placeholder="Paid" value={c.paidAmount}
+                onChange={(e) => updateCompany(idx, "paidAmount", e.target.value)}
+                onWheel={disableScroll}
+                className="w-32 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30" />
               <button onClick={() => removeCompany(idx)} className="text-red-400 hover:text-red-600">
                 <Trash2 size={20} />
               </button>
@@ -285,64 +287,64 @@ const RemainingCash = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm text-indigo-200 mb-1">Paytm</label>
-            <input type="number" 
-            value={paytm} 
-            onChange={(e) => setPaytm(Number(e.target.value) || 0)}
-            onWheel={disableScroll}
-            className="w-40 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30 focus:ring-2 focus:ring-blue-400 text-lg" />
+            <input type="number"
+              value={paytm}
+              onChange={(e) => setPaytm(Number(e.target.value) || 0)}
+              onWheel={disableScroll}
+              className="w-40 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30 focus:ring-2 focus:ring-blue-400 text-lg" />
           </div>
           <div>
             <label className="block text-sm text-indigo-200 mb-1">Card</label>
-            <input type="number" 
-            value={card} 
-            onChange={(e) => setCard(Number(e.target.value) || 0)}
-            onWheel={disableScroll}
-            className="w-40 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30 focus:ring-2 focus:ring-blue-400 text-lg" />
+            <input type="number"
+              value={card}
+              onChange={(e) => setCard(Number(e.target.value) || 0)}
+              onWheel={disableScroll}
+              className="w-40 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30 focus:ring-2 focus:ring-blue-400 text-lg" />
           </div>
           <div>
             <label className="block text-sm text-indigo-200 mb-1">Additional</label>
-            <input type="number" 
-            value={additional} 
-            onChange={(e) => setAdditional(Number(e.target.value) || 0)}
-            onWheel={disableScroll}
-            className="w-40 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30 focus:ring-2 focus:ring-blue-400 text-lg" />
+            <input type="number"
+              value={additional}
+              onChange={(e) => setAdditional(Number(e.target.value) || 0)}
+              onWheel={disableScroll}
+              className="w-40 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30 focus:ring-2 focus:ring-blue-400 text-lg" />
           </div>
           <div>
             <label className="block text-sm text-indigo-200 mb-1">Opening Balance</label>
-            <input type="number" 
-            value={openingBalance} 
-            onChange={(e) => setOpeningBalance(Number(e.target.value) || 0)}
-            onWheel={disableScroll}
-            className="w-40 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30 focus:ring-2 focus:ring-blue-400 text-lg" />
+            <input type="number"
+              value={openingBalance}
+              onChange={(e) => setOpeningBalance(Number(e.target.value) || 0)}
+              onWheel={disableScroll}
+              className="w-40 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30 focus:ring-2 focus:ring-blue-400 text-lg" />
           </div>
         </div>
 
         {/* Actual vs Final Total */}
         <div>
           <label className="block text-sm text-indigo-200 mb-1">Possible Offline Amount</label>
-          <input type="number" 
-          value={posibleOfflineAmount} 
-           onChange={(e) => setPosibleOfflineAmount(Number(e.target.value) || 0)}
-           onWheel={disableScroll}
-           className="w-60 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30" />
+          <input type="number"
+            value={posibleOfflineAmount}
+            onChange={(e) => setPosibleOfflineAmount(Number(e.target.value) || 0)}
+            onWheel={disableScroll}
+            className="w-60 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30" />
         </div>
 
         <div>
           <label className="block text-sm text-indigo-200 mb-1">Possible Online Amount</label>
-          <input type="number" 
-          value={posibleOnlineAmount} 
-          onChange={(e) => setPosibleOnlineAmount(Number(e.target.value) || 0)}
-          onWheel={disableScroll}
-          className="w-60 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30" />
+          <input type="number"
+            value={posibleOnlineAmount}
+            onChange={(e) => setPosibleOnlineAmount(Number(e.target.value) || 0)}
+            onWheel={disableScroll}
+            className="w-60 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30" />
         </div>
 
         <div>
           <label className="block text-sm text-indigo-200 mb-1">Other Payments</label>
-          <input type="number" 
-          value={otherPayments} 
-          onChange={(e) => setOtherPayments(Number(e.target.value) || 0)}
-          onWheel={disableScroll}
-          className="w-60 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30" />
+          <input type="number"
+            value={otherPayments}
+            onChange={(e) => setOtherPayments(Number(e.target.value) || 0)}
+            onWheel={disableScroll}
+            className="w-60 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30" />
         </div>
 
         {/* Remarks */}
@@ -370,18 +372,29 @@ const RemainingCash = () => {
           <div className="text-green-300 text-lg">Overall Sales: ₹{formatAmount(overAllSale)}</div>
           <div className="text-blue-400 text-lg">Difference: ₹{formatAmount(difference)}</div>
           <div
-            className={`text-xl ${
-              difference <= 0 ? "text-green-400" : "text-red-400"
-            }`}
+            className={`text-xl ${difference <= 0 ? "text-green-400" : "text-red-400"
+              }`}
           >
-             Profit/Loss: ₹{formatAmount(difference)}
+            Profit/Loss: ₹{formatAmount(difference)}
             {finalTotal === posibleOfflineAmount
               ? "No Loss 😐"
               : finalTotal < posibleOfflineAmount
-              ? "Loss 😔"
-              : "Profit 🎉"}
+                ? "Loss 😔"
+                : "Profit 🎉"}
+
+            <p className="mt-4 text-sm text-gray-400 text-center">
+              Getting Loss? Check here in the {" "}
+              <span
+                className="text-blue-600 hover:underline cursor-pointer"
+                onClick={() => navigate('/speech')}
+              >
+                Cash counter
+              </span>
+            </p>
           </div>
         </div>
+
+
 
         <button
           onClick={handleSubmit}
@@ -391,6 +404,7 @@ const RemainingCash = () => {
           {loading && <Loader2 className="animate-spin" size={18} />}
           {loading ? "Saving..." : "Save Entry"}
         </button>
+
       </footer>
 
       <Notification />
