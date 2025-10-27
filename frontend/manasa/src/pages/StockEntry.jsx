@@ -59,7 +59,7 @@ const StockEntry = () => {
     }, 200);
   };
 
-  const handleKeyDown = async (e, index) => {
+  const handleMouseDown = async (e, index) => {
     if (e.key === "Enter") {
       e.preventDefault(); // prevent form submit
 
@@ -212,7 +212,7 @@ const StockEntry = () => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 to-black text-white p-4 sm:p-6 md:p-8 font-serif">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-4 sm:p-6 md:p-8 font-serif">
       <div className="max-w-5xl mx-auto space-y-8">
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <h1 className="text-2xl sm:text-3xl font-extrabold text-green-400 font-serif animate-bounce">
@@ -262,7 +262,7 @@ const StockEntry = () => {
                   value={d.name}
                   onChange={(e) => handleDistributorChange(i, "name", e.target.value)}
                   onBlur={() => handleBlur(i)}   // ✅ ensures new distributor auto-saves
-                  onKeyDown={(e) => handleKeyDown(i, e)}
+                  onMouseDown={(e) => handleMouseDown(i, e)}
                   className="w-full p-3 rounded-md bg-black/30 border border-gray-700 text-white"
                 />
 
@@ -273,7 +273,7 @@ const StockEntry = () => {
                       <li
                         key={idx}
                         className="p-2 cursor-pointer hover:bg-gray-600"
-                        onKeyDown={() => selectSuggestion(i, s)} // ✅ fills input when clicked
+                        onMouseDown={() => selectSuggestion(i, s)} // ✅ fills input when clicked
                       >
                         {s}
                       </li>

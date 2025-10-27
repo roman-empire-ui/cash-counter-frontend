@@ -51,3 +51,26 @@ export const getRemCash = async (date = null) => {
     return { success: false, message: e.message || "Network error" };
   }
 };
+
+
+
+// src/services/actualCash.js
+export const getMonthlypl = async (month, year) => {
+  try {
+    let url = `${apiUrl}/api/v1/counter/monthly-summary`;
+
+    // Only add query params if user selected month/year
+    if (month && year) {
+      url += `?month=${month}&year=${year}`;
+    }
+
+    const res = await fetch(url);
+    const data = await res.json();
+    console.log(data)
+    return data;
+  } catch (error) {
+    console.error("Error fetching monthly summary:", error);
+    return { success: false, message: error.message || "Network error" };
+  }
+};
+

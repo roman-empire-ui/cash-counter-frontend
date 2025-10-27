@@ -109,6 +109,22 @@ const RemainingCash = () => {
     setFinalTotal(Number(data.totalRemainingCash) || 0);
   };
 
+  const resetForm = () => {
+    setNotes(defaultNotes);
+    setCoins(defaultCoins);
+    setRemarks("");
+    setPaytm(0);
+    setCard(0);
+    setAdditional(0);
+    setOpeningBalance(0);
+    setCompanies([{ name: "", paidAmount: 0 }]);
+    setPosibleOfflineAmount(0);
+    setPosibleOnlineAmount(0);
+    setOtherPayments(0);
+    setCash(0);
+    setFinalTotal(0);
+  };
+
   const handleSearch = async () => {
     if (!date) return;
     try {
@@ -118,7 +134,7 @@ const RemainingCash = () => {
         populateFromBackend(result.data);
       } else {
         toast.info("No record found for this date");
-        setCompanies([{ name: "", paidAmount: 0 }]);
+        resetForm()
       }
     } catch (err) {
       toast.error(err.message || "Error searching remaining cash");

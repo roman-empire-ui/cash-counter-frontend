@@ -1,42 +1,68 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import MonthlyProfitLoss from "../Components/Monthlypl";
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex justify-center items-center min-h-screen px-4" style={{ backgroundImage: 'url(/images/bg.jpg)', backgroundPosition: 'center', backgroundSize: 'cover' }}>
-      <div className="w-full max-w-md bg-white/25 backdrop-blur-md border-s-2 border-2 border-purple-500 rounded-b-xl shadow-lg rounded-3xl  p-6 text-center">
-        <h1 className="text-3xl font-bold text-white mb-8">Sri Manasa</h1>
+    <div
+      className="min-h-screen flex justify-center items-center bg-gray-950 px-3 py-6"
+      style={{
+        backgroundImage: "url(/images/bg.jpg)",
+        backgroundPosition: "center",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      <div className="w-full max-w-2xl bg-gray-900/70 backdrop-blur-md border border-purple-600/40 rounded-2xl shadow-lg p-6 text-white">
+        {/* Header */}
+        <h1 className="text-3xl font-bold text-center text-purple-400 mb-6">
+          Sri Manasa Dashboard
+        </h1>
 
-        <div className="flex flex-col gap-6">
+        {/* Buttons Section */}
+        <div className="grid grid-cols-2 gap-3 mb-8">
           <button
-            onClick={() => navigate('/stock-entry')}
-            className="transition-transform duration-300 transform hover:scale-105 bg-purple-600 text-white py-3 px-6 rounded-full shadow-md hover:bg-purple-700"
+            onClick={() => navigate("/stock-entry")}
+            className="bg-purple-600 hover:bg-purple-700 transition-all duration-300 py-2.5 rounded-lg font-medium shadow-md hover:scale-[1.03]"
           >
             Stock Update
           </button>
 
           <button
-            onClick={() => navigate('/cash-summary')}
-            className="transition-transform duration-300 transform hover:scale-105 bg-purple-600 text-white py-3 px-6 rounded-full shadow-md hover:bg-purple-700"
+            onClick={() => navigate("/cash-summary")}
+            className="bg-indigo-600 hover:bg-indigo-700 transition-all duration-300 py-2.5 rounded-lg font-medium shadow-md hover:scale-[1.03]"
           >
             Cash Counter
           </button>
 
           <button
-            onClick={() => navigate('/initial-cash')}
-            className="transition-transform duration-300 transform hover:scale-105 bg-purple-600 text-white py-3 px-6 rounded-full shadow-md hover:bg-purple-700"
+            onClick={() => navigate("/initial-cash")}
+            className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 py-2.5 rounded-lg font-medium shadow-md hover:scale-[1.03]"
           >
-            Initial Cash Counter
+            Initial Cash
           </button>
 
           <button
-            onClick={() => navigate('/speech')}
-            className="transition-transform duration-300 transform hover:scale-105 bg-purple-600 text-white py-3 px-6 rounded-full shadow-md hover:bg-purple-700"
+            onClick={() => navigate("/speech")}
+            className="bg-pink-600 hover:bg-pink-700 transition-all duration-300 py-2.5 rounded-lg font-medium shadow-md hover:scale-[1.03]"
           >
-            Speech Change Manager
+            Speech Manager
           </button>
+        </div>
+
+        {/* Monthly Profit/Loss Section */}
+        <div className="mt-4">
+          <h2 className="text-lg font-semibold text-purple-300 mb-3 text-center">
+            Monthly Profit / Loss
+          </h2>
+          <MonthlyProfitLoss />
+        </div>
+
+        {/* Footer */}
+        <div className="text-center text-gray-400 mt-6 text-xs">
+          © {new Date().getFullYear()} Sri Manasa Supermarket
         </div>
       </div>
     </div>
