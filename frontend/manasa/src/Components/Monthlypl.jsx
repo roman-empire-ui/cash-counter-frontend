@@ -113,6 +113,13 @@ const MonthlyProfitLoss = () => {
               </span>
             </div>
 
+            <div className="flex justify-between">
+              <span>Total Entries/M:</span>
+              <span className="text-yellow-400 font-semibold">
+                {data.entriesCount}
+              </span>
+            </div>
+
             <hr className="border-gray-700 my-2" />
 
             <div className="flex justify-between text-lg">
