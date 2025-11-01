@@ -64,7 +64,7 @@ const InitialCash = () => {
           </div>
         ) : (
           <div className="text-center text-gray-300 mt-6 font-serif">
-            No initial cash found for today.
+            No opening balance found for today.
           </div>
         )}
 
