@@ -1,6 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import MonthlyProfitLoss from "../Components/Monthlypl";
+import MonthlyPaymentSummary from "./DashSummary";
+
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -15,14 +17,14 @@ const Dashboard = () => {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <div className="w-full max-w-2xl bg-gray-900/70 backdrop-blur-md border border-purple-600/40 rounded-2xl shadow-lg p-6 text-white">
+      <div className="w-full max-w-5xl bg-gray-900/70 backdrop-blur-md border border-purple-600/40 rounded-2xl shadow-lg p-6 text-white">
         {/* Header */}
         <h1 className="text-3xl font-bold text-center text-purple-400 mb-6">
           Sri Manasa Dashboard
         </h1>
 
         {/* Buttons Section */}
-        <div className="grid grid-cols-2 gap-3 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
           <button
             onClick={() => navigate("/stock-entry")}
             className="bg-purple-600 hover:bg-purple-700 transition-all duration-300 py-2.5 rounded-lg font-medium shadow-md hover:scale-[1.03]"
@@ -52,12 +54,18 @@ const Dashboard = () => {
           </button>
         </div>
 
-        {/* Monthly Profit/Loss Section */}
-        <div className="mt-4">
-          <h2 className="text-lg font-semibold text-purple-300 mb-3 text-center">
-            Monthly Profit / Loss
-          </h2>
-          <MonthlyProfitLoss />
+        {/* Monthly Overview Section */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left Side: Monthly Profit / Loss */}
+          <div className="bg-gray-800/60 border border-purple-500/30 rounded-xl p-4 shadow-md">
+            <h2 className="text-lg font-semibold text-center text-purple-300 mb-3">
+              Monthly Profit / Loss
+            </h2>
+            <MonthlyProfitLoss />
+          </div>
+
+          {/* Right Side: Monthly Payment Summary */}
+          <MonthlyPaymentSummary />
         </div>
 
         {/* Footer */}

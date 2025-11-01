@@ -17,6 +17,7 @@ import ErrorPage from './pages/ErrorPage';
 import ProtectedRoute from './context/AuthContext';
 import ResetPassword from './pages/PasswordRst';
 import SpeechAssistant from './pages/Speech';
+import MonthlyPaymentSummary from './pages/DashSummary';
 
 const AppRoutes = () => {
   const { loading } = useContext(GlobalContext);
@@ -44,6 +45,7 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path='/password-reset' element ={<ResetPassword/>}/>
         <Route path='/speech' element={<SpeechAssistant/>}/>
+        <Route path='/dashboard-summary' element={<MonthlyPaymentSummary/>} />
         
 
         {/* Protected Routes */}
