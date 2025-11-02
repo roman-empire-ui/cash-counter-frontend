@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { PlusCircle, Wallet } from "lucide-react";
+import { PlusCircle, Wallet, CalendarSearch } from "lucide-react";
 import { toast } from "react-toastify";
 import Notification from "../Components/Notification";
 import { cashCount, getInitialCount } from "../services/cashCounter";
 import { useNavigate, useLocation } from "react-router-dom";
 import Lottie from "lottie-react";
+import { motion } from "framer-motion";
 import gears from "../assets/gears.json";
 
 const denominations = {
@@ -24,7 +25,6 @@ const CashCounter = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ✅ Restore from localStorage when page opens or when returning to this route
   useEffect(() => {
     const savedData = localStorage.getItem("cashCounterData");
     if (savedData) {
@@ -52,7 +52,6 @@ const CashCounter = () => {
     }
   }, [location.pathname]);
 
-  // ✅ Save data to localStorage whenever it changes
   useEffect(() => {
     const data = { notes, coins, date };
     localStorage.setItem("cashCounterData", JSON.stringify(data));
@@ -70,7 +69,6 @@ const CashCounter = () => {
     0
   );
 
-  // ✅ Only runs when user clicks "Search"
   const fetchDateData = async () => {
     setLoading(true);
     try {
@@ -105,8 +103,7 @@ const CashCounter = () => {
       const res = await cashCount(date, notes, coins);
       if (res.success) {
         toast.success(res.message);
-        localStorage.removeItem("cashCounterData"); // ✅ clear saved data after successful save
-        // Optional: reset fields after save
+        localStorage.removeItem("cashCounterData");
         setNotes(denominations.notes.map((d) => ({ denomination: d, count: 0 })));
         setCoins(denominations.coins.map((d) => ({ denomination: d, count: 0 })));
       } else {
@@ -124,103 +121,139 @@ const CashCounter = () => {
 
   const renderRows = (type, list) =>
     list.map((item, index) => (
-      <div
+      <motion.div
         key={item.denomination}
-        className="flex items-center justify-between bg-gray-800 rounded-lg p-3"
+        whileHover={{ scale: 1.03 }}
+        transition={{ type: "spring", stiffness: 300 }}
+        className="flex items-center justify-between bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-3 shadow-md border border-gray-700 hover:border-purple-500"
       >
-        <span className="font-medium text-gray-200">{item.denomination}₹</span>
+        <span className="font-semibold text-purple-300 text-lg">
+          ₹{item.denomination}
+        </span>
         <input
           type="number"
           min="0"
           value={item.count}
           onWheel={helper}
           onChange={(e) => handleChange(type, index, e.target.value)}
-          className="w-24 px-3 py-2 rounded-md text-center bg-gray-900 text-white border border-gray-600 focus:ring-2 focus:ring-purple-400 focus:outline-none"
+          className="w-28 px-3 py-2 rounded-lg text-center text-white 
+            bg-gray-950/70 backdrop-blur-sm border border-gray-600 
+            focus:ring-2 focus:ring-purple-400 focus:border-purple-500 
+            outline-none shadow-inner hover:shadow-purple-500/20 transition-all"
         />
-        <span className="text-sm font-semibold text-purple-400">
-          {item.denomination * item.count}₹
+        <span className="text-sm font-bold text-purple-400">
+          ₹{item.denomination * item.count}
         </span>
-      </div>
+      </motion.div>
     ));
 
   return (
-    <div className="relative min-h-screen flex justify-center items-center px-4 bg-black overflow-hidden">
-      {/* 🟣 FULL PAGE LOTTIE LOADER */}
+    <div className="relative min-h-screen flex justify-center items-center px-4 bg-gradient-to-br from-gray-950 via-black to-gray-900 overflow-hidden">
+      {/* Loader */}
       {loading && (
-        <div className="absolute inset-0 z-50 bg-black/90 flex flex-col items-center justify-center backdrop-blur-sm">
+        <div className="absolute inset-0 z-50 bg-black/90 flex flex-col items-center justify-center backdrop-blur-md">
           <Lottie animationData={gears} loop className="w-64 h-64" />
           <p className="text-purple-300 mt-4 text-xl font-semibold animate-pulse">
-            Saving your data...
+            Processing...
           </p>
         </div>
       )}
 
-      <div className="w-full max-w-3xl bg-gray-900 shadow-xl rounded-2xl p-8 relative overflow-hidden">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-3xl bg-gray-900/90 shadow-2xl rounded-3xl p-8 border border-gray-800 backdrop-blur-lg"
+      >
         {/* Header */}
-        <div className="flex flex-col items-center gap-4 mb-8">
-          <div className="flex items-center gap-2">
-            <Wallet size={28} className="text-purple-400 animate-float" />
-            <h1 className="text-3xl text-white animate-pulse">
+        <div className="flex flex-col items-center gap-5 mb-10">
+          <motion.div
+            initial={{ y: -10 }}
+            animate={{ y: 0 }}
+            className="flex items-center gap-3"
+          >
+            <Wallet size={32} className="text-purple-400 animate-float" />
+            <h1 className="text-3xl text-white font-bold tracking-wide">
               Opening Balance
             </h1>
-          </div>
+          </motion.div>
 
-          {/* Date Selector */}
           <div className="flex gap-3">
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="px-4 py-2 rounded-md border border-purple-400 text-purple-300 bg-gray-800 focus:ring-2 focus:ring-purple-500 focus:outline-none"
-            />
-            <button
+            <div className="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-2 border border-gray-700 focus-within:border-purple-500 transition">
+              <CalendarSearch className="text-purple-400" size={18} />
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="bg-transparent text-purple-300 focus:outline-none"
+              />
+            </div>
+            <motion.button
+              whileTap={{ scale: 0.95 }}
               onClick={fetchDateData}
-              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md"
+              className="px-5 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-medium shadow-lg transition-all"
             >
               Search
-            </button>
+            </motion.button>
           </div>
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <h2 className="font-semibold mb-3 text-lg text-purple-300">Notes</h2>
+            <h2 className="font-semibold mb-3 text-lg text-purple-300 border-b border-purple-500/30 pb-1">
+              Notes
+            </h2>
             <div className="space-y-3">{renderRows("notes", notes)}</div>
           </div>
           <div>
-            <h2 className="font-semibold mb-3 text-lg text-purple-300">Coins</h2>
+            <h2 className="font-semibold mb-3 text-lg text-purple-300 border-b border-purple-500/30 pb-1">
+              Coins
+            </h2>
             <div className="space-y-3">{renderRows("coins", coins)}</div>
           </div>
         </div>
 
-        {/* Sticky Total Bar */}
-        <div className="sticky bottom-0 mt-10 bg-gray-800 text-white font-bold rounded-xl shadow-lg px-6 py-4 flex justify-between items-center">
+        {/* Total */}
+        <motion.div
+          layout
+          className="sticky bottom-0 mt-10 bg-gray-800/90 border border-purple-700/40 text-white font-bold rounded-2xl px-6 py-4 flex justify-between items-center shadow-lg backdrop-blur-lg"
+        >
           <span className="text-lg">Total</span>
-          <span className="text-2xl">₹{total}</span>
-        </div>
+          <motion.span
+            key={total}
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 200 }}
+            className="text-2xl text-purple-400"
+          >
+            ₹{total}
+          </motion.span>
+        </motion.div>
 
         {/* Buttons */}
         <div className="mt-8 space-y-4">
-          <button
+          <motion.button
+            whileTap={{ scale: 0.97 }}
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold flex justify-center items-center gap-2 transition-all hover:shadow-lg"
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:opacity-90 text-white font-semibold flex justify-center items-center gap-2 transition-all"
           >
             <PlusCircle size={20} />
-            Save / Update Initial Cash
-          </button>
+            Save / Update opening balance
+          </motion.button>
 
-          <button
-            onClick={() => navigate("/cash-summary")}
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            onClick={() => navigate('/cash-summary')}
             className="w-full py-3 rounded-xl border border-purple-400 text-purple-300 hover:bg-purple-600/20 font-semibold transition-all"
           >
             View Cash Summary
-          </button>
+          </motion.button>
         </div>
 
         <Notification />
-      </div>
+      </motion.div>
     </div>
   );
 };

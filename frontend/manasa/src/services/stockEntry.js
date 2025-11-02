@@ -130,3 +130,23 @@ export const getRemAmt = async (stockEntryId) => {
 }
 
 
+
+// export const updateRemAmount = async (stockEntryId, amountHave) => {
+//     try {
+//       const res = await fetch(`${apiUrl}/api/v1/stock/updateAmountHave/${stockEntryId}`, {
+//         method: "PUT",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ amountHave }),
+//       });
+  
+//       const data = await res.json();
+//       return data;
+//     } catch (err) {
+//       console.error("Error updating remaining amount:", err);
+//       return { success: false, message: "Network error" };
+//     }
+//   };
+
+

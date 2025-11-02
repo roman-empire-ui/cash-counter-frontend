@@ -20,6 +20,7 @@ const AllStocks = () => {
     const fetchStocks = async () => {
       setIsLoading(true)
       const res = await getStocks();
+      console.log('res' , res)
       if (res.success) {
         setAllStocks(res.data);
         setFilteredStocks(res.data);
@@ -365,6 +366,8 @@ const AllStocks = () => {
             </div>
 
             {/* Footer */}
+
+            
             <div className="mt-6 border-t border-purple-500/30 pt-4 text-right">
               <p className="text-2xl font-bold text-pink-400 font-mono">
                 Total Expense: ₹{selectedStock.totalStockExpenses}
