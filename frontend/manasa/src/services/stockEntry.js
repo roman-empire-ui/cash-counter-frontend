@@ -96,13 +96,13 @@ export const deleteStock = async ({ stockId, distributorId }) => {
     }
 }
 
-export const calRem = async ({ date, amountHave, stockEntryId }) => {
+export const calRem = async ({ date, amountHave, stockEntryId , extraSources }) => {
 
     try {
         const res = await fetch(`${apiUrl}/api/v1/stock/remAmount`, {
             method: 'POST',
             headers: authHeaders(),
-            body: JSON.stringify({ date, amountHave, stockEntryId })
+            body: JSON.stringify({ date, amountHave, stockEntryId , extraSources})
         })
         const data = await res.json()
         return data
@@ -118,6 +118,21 @@ export const getRemAmt = async (stockEntryId) => {
 
     try {
         const res = await fetch(`${apiUrl}/api/v1/stock/getRemAmount/${stockEntryId}`, {
+            method: 'GET',
+            headers: authHeaders()
+        })
+        const data = await res.json()
+        return data
+    } catch (e) {
+        console.log('error', e)
+        return { success: false, message: "Error Occured while getting the amount" };
+    }
+}
+
+export const getRemAmts = async () => {
+
+    try {
+        const res = await fetch(`${apiUrl}/api/v1/stock/get-rem-amounts`, {
             method: 'GET',
             headers: authHeaders()
         })

@@ -10,7 +10,7 @@ import gears from "../assets/gears.json";
 
 const denominations = {
   notes: [500, 200, 100, 50, 20, 10],
-  coins: [1, 2, 5, 10],
+  coins: [5,2,1],
 };
 
 const CashCounter = () => {

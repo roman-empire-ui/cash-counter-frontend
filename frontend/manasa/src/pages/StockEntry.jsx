@@ -9,9 +9,12 @@ import {
 } from '../services/stockEntry';
 import { toast } from 'react-toastify';
 import Notification from '../Components/Notification';
-import { Trash2, PlusCircle, FilePlus2, Pencil } from 'lucide-react';
+import { Trash2, PlusCircle, FilePlus2, Pencil, Menu } from 'lucide-react';
 import debounce from 'lodash.debounce'
 import { createDistributor, searchDistributor } from '../services/distributor';
+import MenuIcon from '../Components/MenuIcon';
+
+
 
 const StockEntry = () => {
   const [date, setDate] = useState('');
@@ -26,6 +29,7 @@ const StockEntry = () => {
   const [paytm, setPaytm] = useState('')
   const [companies, setCompanies] = useState([{ name: '', amount: '' }])
   const summaryRef = useRef(null);
+
 
   useEffect(() => {
 
@@ -108,17 +112,17 @@ const StockEntry = () => {
       if (todayEntry) {
         // Ensure distributors exist
         todayEntry.distributors = todayEntry.distributors || [];
-  
+
         // Calculate total per day
         const dayTotal = todayEntry.distributors.reduce(
           (sum, d) => sum + Number(d.totalPaid || 0),
           0
         );
         todayEntry.totalStockExpenses = dayTotal;
-  
+
         setStockList([todayEntry]);
         setTotal(dayTotal);
-  
+
         const rem = await getRemAmt(todayEntry._id);
         if (rem.success && rem.data) {
           setRemainingAmount(rem.data.remainingAmount);
@@ -129,11 +133,11 @@ const StockEntry = () => {
         setTotal(0);
       }
     } else {
-      toast.error(res.message ||'Failed to load stock data');
+      toast.error(res.message || 'Failed to load stock data');
     }
     setLoading(false);
   };
-  
+
 
 
 
@@ -189,25 +193,30 @@ const StockEntry = () => {
         date: stockEntry.date,
         amountHave: amount,
         stockEntryId: stockEntry._id,
+        extraSources: {
+          paytm: Number(paytm) || 0,
+          company: companies.map(c => ({
+            name: c.name,
+            amount: Number(c.amount) || 0
+          }))
+        }
       };
 
       const res = await calRem(payload);
       if (!res.success) {
         toast.error(res.message || 'Failed to update remaining amount');
       }
-    }, 500); // 500ms delay
+    }, 500);
 
     debouncedCalc();
 
-    return () => debouncedCalc.cancel(); // cleanup
-  }, [amountHave, stockList]);
+    return () => debouncedCalc.cancel();
+  }, [amountHave, paytm, companies, stockList]);
+
 
 
   const totalCompanies = companies.reduce((sum, c) => sum + Number(c.amount || 0), 0)
-  const finalTotal =
-    Number(remainingAmount || 0) +
-    Number(paytm || 0) +
-    totalCompanies
+  const finalTotal = Number(remainingAmount || 0) + Number(paytm || 0) + totalCompanies
 
 
 
@@ -216,7 +225,7 @@ const StockEntry = () => {
       <div className="max-w-5xl mx-auto space-y-8">
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <h1 className="text-2xl sm:text-3xl font-extrabold text-green-400 font-serif animate-bounce">
-             Daily Stock Payments
+            Daily Stock Payments
           </h1>
           <span className="text-sm text-gray-400">
             Track suppliers & expenses with ease
@@ -323,7 +332,7 @@ const StockEntry = () => {
         {/* Stock Summary */}
         <div ref={summaryRef} className="bg-white/5 backdrop-blur-sm rounded-2xl p-6">
           <h2 className="text-xl font-bold text-emerald-400 mb-4 animate-bounce">
-             Stock Summary
+            Stock Summary
           </h2>
 
           {loading ? (
@@ -395,9 +404,9 @@ const StockEntry = () => {
                                       } else toast.error("Update failed");
                                     }
                                   }}
-                                  className="bg-blue-600 hover:bg-blue-800 w-6 h-6 rounded-full flex items-center justify-center"
+                                  className="bg-blue-600 hover:bg-blue-800 w-9 h-9 rounded-full flex items-center justify-center"
                                 >
-                                  <Pencil className="w-4 h-4" />
+                                  <Pencil className="w-6 h-6" />
                                 </button>
                                 <button
                                   onClick={async () => {
@@ -416,9 +425,9 @@ const StockEntry = () => {
                                       }
                                     }
                                   }}
-                                  className="bg-red-600 hover:bg-red-800 w-6 h-6 rounded-full flex items-center justify-center"
+                                  className="bg-red-600 hover:bg-red-800 w-9 h-9 rounded-full flex items-center justify-center"
                                 >
-                                  <Trash2 className="w-4 h-4" />
+                                  <Trash2 className="w-6 h-6" />
                                 </button>
                               </div>
                             </div>
@@ -451,6 +460,7 @@ const StockEntry = () => {
           {/* Daily Balance Section */}
           {stockList.length > 0 && (
             <div className="bg-white/10 mt-6 rounded-xl p-6 space-y-6">
+            <MenuIcon/>
               <h3 className="text-lg font-bold text-cyan-400 animate-bounce">
                 💰 Daily Balance & Sources
               </h3>
@@ -463,7 +473,7 @@ const StockEntry = () => {
 
                 {/* Pincode & Paytm */}
                 <div className="grid sm:grid-cols-2 gap-4">
-                 
+
                   <input
                     type="number"
                     placeholder="Paytm ₹"

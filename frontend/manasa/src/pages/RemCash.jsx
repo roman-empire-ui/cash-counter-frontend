@@ -13,7 +13,7 @@ const defaultNotes = [500, 200, 100, 50, 20, 10].map((denom) => ({
   denomination: denom,
   count: 0,
 }));
-const defaultCoins = [10, 5, 2, 1].map((denom) => ({
+const defaultCoins = [ 5, 2, 1].map((denom) => ({
   denomination: denom,
   count: 0,
 }));

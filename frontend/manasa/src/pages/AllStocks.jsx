@@ -322,13 +322,13 @@ const AllStocks = () => {
                           }
                           className="flex-1 py-2 bg-green-600 rounded-xl hover:bg-green-700 transition font-serif"
                         >
-                          ✅ Save
+                          Save
                         </button>
                         <button
                           onClick={() => setEditingDistributor(null)}
                           className="flex-1 py-2 bg-gray-600 rounded-xl hover:bg-gray-700 transition font-serif"
                         >
-                          ❌ Cancel
+                           Cancel
                         </button>
                       </div>
                     </>
