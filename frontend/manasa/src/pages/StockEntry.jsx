@@ -10,7 +10,6 @@ import {
 import { toast } from 'react-toastify';
 import Notification from '../Components/Notification';
 import { Trash2, PlusCircle, FilePlus2, Pencil, Menu } from 'lucide-react';
-import debounce from 'lodash.debounce'
 import { createDistributor, searchDistributor } from '../services/distributor';
 import MenuIcon from '../Components/MenuIcon';
 
@@ -28,6 +27,7 @@ const StockEntry = () => {
   const [loading, setLoading] = useState(true);
   const [paytm, setPaytm] = useState('')
   const [companies, setCompanies] = useState([{ name: '', amount: '' }])
+  const [isSaved , setIsSaved] = useState(false)
   const summaryRef = useRef(null);
 
 
@@ -179,39 +179,6 @@ const StockEntry = () => {
     }
   };
 
-  useEffect(() => {
-    const debouncedCalc = debounce(async () => {
-      const stockEntry = stockList[0];
-      const amount = Number(amountHave);
-      if (!stockEntry || amountHave === '' || isNaN(amount)) return;
-
-      const expense = stockEntry.totalStockExpenses || 0;
-      const rem = amount - expense;
-      setRemainingAmount(rem);
-
-      const payload = {
-        date: stockEntry.date,
-        amountHave: amount,
-        stockEntryId: stockEntry._id,
-        extraSources: {
-          paytm: Number(paytm) || 0,
-          company: companies.map(c => ({
-            name: c.name,
-            amount: Number(c.amount) || 0
-          }))
-        }
-      };
-
-      const res = await calRem(payload);
-      if (!res.success) {
-        toast.error(res.message || 'Failed to update remaining amount');
-      }
-    }, 500);
-
-    debouncedCalc();
-
-    return () => debouncedCalc.cancel();
-  }, [amountHave, paytm, companies, stockList]);
 
 
 
@@ -458,9 +425,10 @@ const StockEntry = () => {
 
           {/* Remaining Amount */}
           {/* Daily Balance Section */}
+          {/* Daily Balance Section */}
           {stockList.length > 0 && (
             <div className="bg-white/10 mt-6 rounded-xl p-6 space-y-6">
-            <MenuIcon/>
+              <MenuIcon />
               <h3 className="text-lg font-bold text-cyan-400 animate-bounce">
                 💰 Daily Balance & Sources
               </h3>
@@ -471,9 +439,8 @@ const StockEntry = () => {
                   ➕ Add Extra Sources
                 </h3>
 
-                {/* Pincode & Paytm */}
+                {/* Paytm */}
                 <div className="grid sm:grid-cols-2 gap-4">
-
                   <input
                     type="number"
                     placeholder="Paytm ₹"
@@ -494,6 +461,7 @@ const StockEntry = () => {
                         const updated = [...companies];
                         updated[i].name = e.target.value;
                         setCompanies(updated);
+                        setIsSaved(false)
                       }}
                       className="col-span-6 p-3 rounded-md bg-black/30 border border-gray-700 text-white"
                     />
@@ -513,6 +481,7 @@ const StockEntry = () => {
                         const updated = [...companies];
                         updated.splice(i, 1);
                         setCompanies(updated);
+                        setIsSaved(false)
                       }}
                       className="w-8 h-8 bg-gray-600 hover:bg-red-600 rounded-full text-white flex items-center justify-center"
                     >
@@ -556,6 +525,51 @@ const StockEntry = () => {
                 )}
               </div>
 
+              {/* Save Button */}
+              <div className="flex justify-end">
+                <button
+                disabled={isSaved}
+                  onClick={async () => {
+                    const stockEntryData = stockList[0];
+                    if (!stockEntryData) return toast.error("No stock entry found!");
+
+                    const amount = Number(amountHave);
+                    if (isNaN(amount)) return toast.error("Enter valid cash amount");
+
+                    const expense = stockEntryData.totalStockExpenses || 0;
+                    const rem = amount - expense;
+                    setRemainingAmount(rem);
+
+                    const payload = {
+                      date: stockEntryData.date,
+                      amountHave: amount,
+                      stockEntryId: stockEntryData._id,
+                      extraSources: {
+                        paytm: Number(paytm) || 0,
+                        company: companies.map(c => ({
+                          name: c.name,
+                          amount: Number(c.amount) || 0,
+                        })),
+                      },
+                    };
+
+                    const res = await calRem(payload);
+                    if (res.success) {
+                      toast.success( res.message || "Daily balance saved successfully!");
+                      setIsSaved(true)
+                    } else {
+                      toast.error(res.message || "Failed to save daily balance");
+                    }
+                  }}
+                  className={`px-6 py-3 rounded-full text-lg flex items-center gap-2 transition-all duration-200 ${
+                    isSaved
+                      ? "bg-blue-600 opacity-50 cursor-not-allowed"
+                      : "bg-blue-600 hover:bg-blue-700 text-white"
+                  }`}                >
+                  💾 Save Daily Balance
+                </button>
+              </div>
+
               {/* Final Total */}
               <hr className="border-gray-600 my-4" />
               <div className="text-2xl text-yellow-300 font-mono">
@@ -563,6 +577,7 @@ const StockEntry = () => {
               </div>
             </div>
           )}
+
 
         </div>
 

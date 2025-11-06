@@ -13,7 +13,7 @@ const defaultNotes = [500, 200, 100, 50, 20, 10].map((denom) => ({
   denomination: denom,
   count: 0,
 }));
-const defaultCoins = [ 5, 2, 1].map((denom) => ({
+const defaultCoins = [5, 2, 1].map((denom) => ({
   denomination: denom,
   count: 0,
 }));
@@ -318,7 +318,7 @@ const RemainingCash = () => {
               className="w-40 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30 focus:ring-2 focus:ring-blue-400 text-lg" />
           </div>
           <div>
-            <label className="block text-sm text-indigo-200 mb-1">Additional</label>
+            <label className="block text-sm text-indigo-200 mb-1">Paytm Additional Amounts</label>
             <input type="number"
               value={additional}
               onChange={(e) => setAdditional(Number(e.target.value) || 0)}
@@ -379,38 +379,36 @@ const RemainingCash = () => {
           <div className="text-yellow-400 text-lg">Card: ₹{formatAmount(card)}</div>
           <div className="text-yellow-400 text-lg">Company Paid: ₹{formatAmount(companyPaidTotal)}</div>
           <div className="text-yellow-300 text-lg">Total cash & company: ₹{formatAmount(cashTotal)}</div>
-          <div className="text-green-400 text-lg">
-            Overall Cash Total: ₹{formatAmount(overallCashTotal)}
-          </div>
-          <div className="text-green-400 text-lg">
-            Final Total(-OPB): ₹{formatAmount(finalTotal)}
-          </div>
+          <div className="text-green-400 text-lg">Overall Cash Total: ₹{formatAmount(overallCashTotal)}</div>
+          <div className="text-green-400 text-lg">Final Total(-OPB): ₹{formatAmount(finalTotal)}</div>
           <div className="text-green-300 text-lg">Overall Sales: ₹{formatAmount(overAllSale)}</div>
           <div className="text-blue-400 text-lg">Difference: ₹{formatAmount(difference)}</div>
+
           <div
-            className={`text-xl ${difference <= 0 ? "text-green-400" : "text-red-400"
+            className={`flex items-center gap-2 text-xl ${difference < 0 ? "text-green-400" : difference > 0 ? "text-red-400" : "text-yellow-400"
               }`}
           >
-            Profit/Loss: ₹{formatAmount(difference)}
-            {finalTotal === posibleOfflineAmount
-              ? "No Loss 😐"
-              : finalTotal < posibleOfflineAmount
-                ? "Loss 😔"
-                : "Profit 🎉"}
+            <span>Profit/Loss: ₹{formatAmount(Math.abs(difference))}</span>
 
-            <p className="mt-4 text-sm text-gray-400 text-center">
-              Getting Loss? Check here in the {" "}
-              <span
-                className="text-blue-600 hover:underline cursor-pointer"
-                onClick={() => navigate('/speech')}
-              >
-                Cash counter
-              </span>
-            </p>
+            {/* Inline Arrow beside amount */}
+            {difference < 0 ? (
+              <div className="arrow-up inline-block align-middle"></div> // Profit → Green Up
+            ) : difference > 0 ? (
+              <div className="arrow-down inline-block align-middle"></div> // Loss → Red Down
+            ) : null}
           </div>
+
+
+          <p className="mt-4 text-sm text-gray-400 text-center">
+            Getting Loss? Check here in the{" "}
+            <span
+              className="text-blue-600 hover:underline cursor-pointer"
+              onClick={() => navigate("/speech")}
+            >
+              Cash counter
+            </span>
+          </p>
         </div>
-
-
 
         <button
           onClick={handleSubmit}
@@ -420,8 +418,8 @@ const RemainingCash = () => {
           {loading && <Loader2 className="animate-spin" size={18} />}
           {loading ? "Saving..." : "Save Entry"}
         </button>
-
       </footer>
+
 
       <Notification />
     </div>
