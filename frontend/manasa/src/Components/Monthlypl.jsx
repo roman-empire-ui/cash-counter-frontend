@@ -1,4 +1,3 @@
-// src/components/MonthlyProfitLoss.jsx
 import React, { useEffect, useState } from "react";
 import { Loader2, Search } from "lucide-react";
 import { toast } from "react-toastify";
@@ -9,6 +8,7 @@ const MonthlyProfitLoss = () => {
   const [loading, setLoading] = useState(false);
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
+  const [showAmounts, setShowAmounts] = useState(false);
 
   const fetchMonthlyPL = async (m = month, y = year) => {
     try {
@@ -31,8 +31,6 @@ const MonthlyProfitLoss = () => {
     fetchMonthlyPL();
   }, []);
 
-  
-
   const handleSearch = () => {
     if (!month || !year) {
       toast.error("Please select both month and year");
@@ -48,8 +46,18 @@ const MonthlyProfitLoss = () => {
     month: "long",
   });
 
+  const hideAmount = (value) => {
+    if (showAmounts) return value;
+    const dots = "•".repeat(String(value).length);
+    return dots;
+  };
+
   return (
-    <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl shadow-lg p-6 text-white max-w-lg mx-auto">
+    <div
+      className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl shadow-lg p-6 text-white max-w-lg mx-auto"
+      onMouseEnter={() => setShowAmounts(true)}
+      onMouseLeave={() => setShowAmounts(false)}
+    >
       <h2 className="text-xl font-semibold text-gray-300 text-center mb-6">
         Monthly Profit & Loss Summary
       </h2>
@@ -98,21 +106,28 @@ const MonthlyProfitLoss = () => {
             {monthName} {year}
           </h3>
 
-          <div className="flex flex-col space-y-3">
+          <div className="flex flex-col space-y-3 transition-all">
+            {/* 🟢 Total Profit */}
             <div className="flex justify-between">
               <span>Total Profit:</span>
-              <span className="text-green-400 font-semibold">
-                +₹{formatAmount(data.totalProfit)}
+              <span className="text-green-400 font-semibold transition-all duration-200">
+                {showAmounts
+                  ? `+₹${formatAmount(data.totalProfit)}`
+                  : hideAmount(`+₹${formatAmount(data.totalProfit)}`)}
               </span>
             </div>
 
+            {/* 🔴 Total Loss */}
             <div className="flex justify-between">
               <span>Total Loss:</span>
-              <span className="text-red-400 font-semibold">
-                -₹{formatAmount(data.totalLoss)}
+              <span className="text-red-400 font-semibold transition-all duration-200">
+                {showAmounts
+                  ? `-₹${formatAmount(data.totalLoss)}`
+                  : hideAmount(`-₹${formatAmount(data.totalLoss)}`)}
               </span>
             </div>
 
+            {/* 🟡 Entries */}
             <div className="flex justify-between">
               <span>Total Entries/M:</span>
               <span className="text-yellow-400 font-semibold">
@@ -122,18 +137,30 @@ const MonthlyProfitLoss = () => {
 
             <hr className="border-gray-700 my-2" />
 
+            {/* ⚖️ Net Result */}
             <div className="flex justify-between text-lg">
               <span>Net Result:</span>
               <span
-                className={`font-bold ${
+                className={`font-bold transition-all duration-200 ${
                   data.netTotal >= 0 ? "text-green-400" : "text-red-400"
                 }`}
               >
-                {data.netTotal >= 0 ? "+" : "-"}₹
-                {formatAmount(Math.abs(data.netTotal))}
+                {showAmounts
+                  ? `${data.netTotal >= 0 ? "+" : "-"}₹${formatAmount(
+                      Math.abs(data.netTotal)
+                    )}`
+                  : hideAmount(
+                      `${data.netTotal >= 0 ? "+" : "-"}₹${formatAmount(
+                        Math.abs(data.netTotal)
+                      )}`
+                    )}
               </span>
             </div>
           </div>
+
+          <p className="text-xs text-gray-500 text-center mt-4">
+            (Hover to reveal values)
+          </p>
         </div>
       )}
     </div>

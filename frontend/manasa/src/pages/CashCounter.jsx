@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { PlusCircle, Wallet, CalendarSearch } from "lucide-react";
+import { PlusCircle, Wallet, CalendarSearch, RefreshCw } from "lucide-react";
 import { toast } from "react-toastify";
 import Notification from "../Components/Notification";
 import { cashCount, getInitialCount } from "../services/cashCounter";
@@ -10,10 +10,14 @@ import gears from "../assets/gears.json";
 
 const denominations = {
   notes: [500, 200, 100, 50, 20, 10],
-  coins: [5,2,1],
+  coins: [5, 2, 1],
 };
 
 const CashCounter = () => {
+  const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split("T")[0];
+
   const [notes, setNotes] = useState(
     denominations.notes.map((d) => ({ denomination: d, count: 0 }))
   );
@@ -21,10 +25,13 @@ const CashCounter = () => {
     denominations.coins.map((d) => ({ denomination: d, count: 0 }))
   );
   const [loading, setLoading] = useState(false);
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [date, setDate] = useState(tomorrow);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
+  // ✅ Restore from localStorage
   useEffect(() => {
     const savedData = localStorage.getItem("cashCounterData");
     if (savedData) {
@@ -52,11 +59,13 @@ const CashCounter = () => {
     }
   }, [location.pathname]);
 
+  // ✅ Save to localStorage
   useEffect(() => {
     const data = { notes, coins, date };
     localStorage.setItem("cashCounterData", JSON.stringify(data));
   }, [notes, coins, date]);
 
+  // ✅ Input change
   const handleChange = (type, index, value) => {
     const updater = type === "notes" ? setNotes : setCoins;
     const list = type === "notes" ? [...notes] : [...coins];
@@ -64,11 +73,13 @@ const CashCounter = () => {
     updater(list);
   };
 
+  // ✅ Calculate total
   const total = [...notes, ...coins].reduce(
     (sum, item) => sum + item.denomination * item.count,
     0
   );
 
+  // ✅ Fetch data by date
   const fetchDateData = async () => {
     setLoading(true);
     try {
@@ -97,12 +108,47 @@ const CashCounter = () => {
     }
   };
 
+  // ✅ Reload all data
+  const handleReload = () => {
+    setLoading(true);
+    setTimeout(() => {
+      localStorage.removeItem("cashCounterData");
+      setNotes(denominations.notes.map((d) => ({ denomination: d, count: 0 })));
+      setCoins(denominations.coins.map((d) => ({ denomination: d, count: 0 })));
+      setDate(tomorrow);
+      toast.success("Page reloaded successfully!");
+      setLoading(false);
+    }, 700);
+  };
+
+  // ✅ Handle submit with date protection
   const handleSubmit = async () => {
+    const today = new Date().toISOString().split("T")[0];
+    const tomorrowDate = new Date(Date.now() + 24 * 60 * 60 * 1000)
+      .toISOString()
+      .split("T")[0];
+
+    if (date === today) {
+      toast.error("⚠️ You didn't change the date! Please select tomorrow's date before saving.");
+      return;
+    }
+
+    if (date !== tomorrowDate) {
+      setConfirmAction(() => saveData);
+      setShowConfirmModal(true);
+      return;
+    }
+
+    saveData();
+  };
+
+  const saveData = async () => {
+    setShowConfirmModal(false);
     setLoading(true);
     try {
       const res = await cashCount(date, notes, coins);
       if (res.success) {
-        toast.success(res.message);
+        toast.success( res.message || `Opening balance for ${date} saved successfully.`);
         localStorage.removeItem("cashCounterData");
         setNotes(denominations.notes.map((d) => ({ denomination: d, count: 0 })));
         setCoins(denominations.coins.map((d) => ({ denomination: d, count: 0 })));
@@ -178,7 +224,7 @@ const CashCounter = () => {
             </h1>
           </motion.div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-3 flex-wrap justify-center">
             <div className="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-2 border border-gray-700 focus-within:border-purple-500 transition">
               <CalendarSearch className="text-purple-400" size={18} />
               <input
@@ -188,12 +234,23 @@ const CashCounter = () => {
                 className="bg-transparent text-purple-300 focus:outline-none"
               />
             </div>
+
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={fetchDateData}
               className="px-5 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-medium shadow-lg transition-all"
             >
               Search
+            </motion.button>
+
+            {/* ✅ Reload Button */}
+            <motion.button
+              whileTap={{ rotate: 180, scale: 0.9 }}
+              onClick={handleReload}
+              className="px-5 py-2 rounded-lg border border-purple-500 text-purple-300 hover:bg-purple-700/30 font-medium flex items-center gap-2 transition-all"
+            >
+              <RefreshCw size={18} />
+              Reload
             </motion.button>
           </div>
         </div>
@@ -251,6 +308,54 @@ const CashCounter = () => {
             View Cash Summary
           </motion.button>
         </div>
+
+        {/* Confirmation Modal */}
+        {showConfirmModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 200 }}
+              className="bg-gray-900 border border-purple-500/40 rounded-2xl p-8 max-w-md w-[90%] shadow-2xl text-center"
+            >
+              <h2 className="text-2xl font-bold text-white mb-3">Confirm Save</h2>
+              <p className="text-gray-300 mb-6">
+                You’re about to save opening balance for{" "}
+                <span className="text-purple-400 font-semibold">{date}</span>.
+                <br />
+                Total Amount:{" "}
+                <span className="text-purple-300 font-semibold">₹{total}</span>
+                <br />
+                Are you sure you want to continue?
+              </p>
+
+              <div className="flex justify-center gap-4">
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    setShowConfirmModal(false);
+                    confirmAction && confirmAction();
+                  }}
+                  className="px-6 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold hover:opacity-90 transition-all"
+                >
+                  Confirm
+                </motion.button>
+
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowConfirmModal(false)}
+                  className="px-6 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition-all"
+                >
+                  Cancel
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
 
         <Notification />
       </motion.div>

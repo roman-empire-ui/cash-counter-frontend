@@ -27,7 +27,7 @@ const StockEntry = () => {
   const [loading, setLoading] = useState(true);
   const [paytm, setPaytm] = useState('')
   const [companies, setCompanies] = useState([{ name: '', amount: '' }])
-  const [isSaved , setIsSaved] = useState(false)
+  const [isSaved, setIsSaved] = useState(false)
   const summaryRef = useRef(null);
 
 
@@ -528,7 +528,17 @@ const StockEntry = () => {
               {/* Save Button */}
               <div className="flex justify-end">
                 <button
-                disabled={isSaved}
+                  disabled={
+                    isSaved ||
+                    !(
+                      (String(amountHave).trim() !== "") ||
+                      (String(paytm).trim() !== "") ||
+                      companies.some(
+                        (c) =>
+                          String(c.name).trim() !== "" || String(c.amount).trim() !== ""
+                      )
+                    )
+                  }
                   onClick={async () => {
                     const stockEntryData = stockList[0];
                     if (!stockEntryData) return toast.error("No stock entry found!");
@@ -547,7 +557,7 @@ const StockEntry = () => {
                       extraSources: {
                         paytm: Number(paytm) || 0,
                         company: companies.map(c => ({
-                          name: c.name,
+                          name: String(c.name || "").trim(),
                           amount: Number(c.amount) || 0,
                         })),
                       },
@@ -555,20 +565,29 @@ const StockEntry = () => {
 
                     const res = await calRem(payload);
                     if (res.success) {
-                      toast.success( res.message || "Daily balance saved successfully!");
-                      setIsSaved(true)
+                      toast.success(res.message || "Daily balance saved successfully!");
+                      setIsSaved(true);
                     } else {
                       toast.error(res.message || "Failed to save daily balance");
                     }
                   }}
-                  className={`px-6 py-3 rounded-full text-lg flex items-center gap-2 transition-all duration-200 ${
-                    isSaved
+                  className={`px-6 py-3 rounded-full text-lg font-serif flex items-center gap-2 transition-all duration-200 ${isSaved ||
+                      !(
+                        (String(amountHave).trim() !== "") ||
+                        (String(paytm).trim() !== "") ||
+                        companies.some(
+                          (c) =>
+                            String(c.name).trim() !== "" || String(c.amount).trim() !== ""
+                        )
+                      )
                       ? "bg-blue-600 opacity-50 cursor-not-allowed"
                       : "bg-blue-600 hover:bg-blue-700 text-white"
-                  }`}                >
-                  💾 Save Daily Balance
+                    }`}
+                >
+                  Save Daily Balance
                 </button>
               </div>
+
 
               {/* Final Total */}
               <hr className="border-gray-600 my-4" />
