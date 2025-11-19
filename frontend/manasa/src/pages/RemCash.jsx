@@ -302,7 +302,7 @@ const RemainingCash = () => {
         {/* Extra Inputs */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm text-indigo-200 mb-1">Paytm</label>
+            <label className="block text-sm text-indigo-200 mb-1">Paytm / PhonePe</label>
             <input type="number"
               value={paytm}
               onChange={(e) => setPaytm(Number(e.target.value) || 0)}
