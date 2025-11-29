@@ -6,18 +6,20 @@ import {
   updateStock,
   calRem,
   getRemAmt,
+  getStockWithDate,
+  getRemAmts,
 } from '../services/stockEntry';
 import { toast } from 'react-toastify';
 import Notification from '../Components/Notification';
-import { Trash2, PlusCircle, FilePlus2, Pencil, Menu } from 'lucide-react';
+import { Trash2, PlusCircle, FilePlus2, Pencil, Menu, Search } from 'lucide-react';
 import { createDistributor, searchDistributor } from '../services/distributor';
 import MenuIcon from '../Components/MenuIcon';
-
-
+// import Lottie from 'lottie-react'
+// import loading1 from '../assets/loading1.json'
 
 const StockEntry = () => {
   const [date, setDate] = useState('');
-  const [distributors, setDistributors] = useState([{ name: '', totalPaid: '' }]);
+  const [distributors, setDistributors] = useState([{ name: '', totalPaid: '', inv: '' }]);
   const [suggestions, setSuggestions] = useState([])
   const [activeIndex, setActiveIndex] = useState(null)
   const [total, setTotal] = useState(0);
@@ -30,15 +32,9 @@ const StockEntry = () => {
   const [isSaved, setIsSaved] = useState(false)
   const summaryRef = useRef(null);
 
-
   useEffect(() => {
-
     fetchStocks();
   }, []);
-
-
-
-
 
   // On blur → auto-create if new distributor
   const handleBlur = async (index) => {
@@ -63,19 +59,6 @@ const StockEntry = () => {
     }, 200);
   };
 
-  const handleMouseDown = async (e, index) => {
-    if (e.key === "Enter") {
-      e.preventDefault(); // prevent form submit
-
-      if (suggestions.length > 0) {
-        // ✅ select first suggestion
-        selectSuggestion(index, suggestions[0]);
-      } else {
-        // ✅ treat as new distributor if not empty
-        await handleBlur(index);
-      }
-    }
-  };
 
   // Handle typing in distributor input
   const handleDistributorChange = async (index, field, value) => {
@@ -104,40 +87,202 @@ const StockEntry = () => {
     setActiveIndex(null);
   };
 
+  // ============================
+  // fetchStocks (updated: auto carry-forward from last remaining)
+  // ============================
   const fetchStocks = async () => {
     setLoading(true);
-    const res = await getStocks();
-    if (res.success) {
-      const todayEntry = res.data[0];
-      if (todayEntry) {
-        // Ensure distributors exist
-        todayEntry.distributors = todayEntry.distributors || [];
 
-        // Calculate total per day
-        const dayTotal = todayEntry.distributors.reduce(
-          (sum, d) => sum + Number(d.totalPaid || 0),
-          0
-        );
-        todayEntry.totalStockExpenses = dayTotal;
+    try {
+      // set date to today (YYYY-MM-DD)
+      const todayISO = new Date().toISOString().split('T')[0];
+      setDate(todayISO);
 
-        setStockList([todayEntry]);
-        setTotal(dayTotal);
+      const res = await getStocks();
 
-        const rem = await getRemAmt(todayEntry._id);
-        if (rem.success && rem.data) {
-          setRemainingAmount(rem.data.remainingAmount);
-          setAmountHave(rem.data.amountHave);
+      // Fetch all rem amounts (for fallback carry-forward)
+      const remAll = await getRemAmts();
+
+      if (res.success) {
+        const todayEntry = res.data[0];
+
+        if (todayEntry) {
+          // Ensure distributors exist
+          todayEntry.distributors = todayEntry.distributors || [];
+
+          // Calculate total per day
+          const dayTotal = todayEntry.distributors.reduce(
+            (sum, d) => sum + Number(d.totalPaid || 0),
+            0
+          );
+          todayEntry.totalStockExpenses = dayTotal;
+
+          setStockList([todayEntry]);
+          setTotal(dayTotal);
+
+          // Try to load today's saved daily balance by stockEntry _id
+          const rem = await getRemAmt(todayEntry._id);
+          if (rem.success && rem.data) {
+            setRemainingAmount(rem.data.remainingAmount);
+            setAmountHave(rem.data.amountHave);
+            setPaytm(rem.data.extraSources?.paytm || "");
+            setCompanies(
+              rem.data.extraSources?.company?.length > 0
+                ? rem.data.extraSources.company
+                : [{ name: "", amount: "" }]
+            );
+          } else {
+            // If there's no saved rem for today, try to fallback to the latest previous remainingAmount
+            if (remAll.success && remAll.data.length > 0) {
+              const previous = remAll.data
+                .filter((r) => new Date(r.date) < new Date(todayISO))
+                .sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+
+              if (previous) {
+                setAmountHave(previous.remainingAmount || "");
+              } else {
+                setAmountHave("");
+              }
+            } else {
+              setAmountHave("");
+            }
+            setRemainingAmount(null);
+            setPaytm("");
+            setCompanies([{ name: "", amount: "" }]);
+          }
+        } else {
+          // No stock entry for today: set empty stockList and carry-forward from last saved remaining
+          setStockList([]);
+          setTotal(0);
+
+          if (remAll.success && remAll.data.length > 0) {
+            // find latest rem entry (most recent date)
+            const previous = remAll.data
+              .sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+
+            if (previous) {
+              setAmountHave(previous.remainingAmount || "");
+            } else {
+              setAmountHave("");
+            }
+          } else {
+            setAmountHave("");
+          }
+
+          setRemainingAmount(null);
+          setPaytm("");
+          setCompanies([{ name: "", amount: "" }]);
         }
       } else {
+        toast.error(res.message || 'Failed to load stock data');
+
+        // still try to load previous remaining as fallback
+        if (remAll.success && remAll.data.length > 0) {
+          const previous = remAll.data
+            .sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+
+          if (previous) {
+            setAmountHave(previous.remainingAmount || "");
+          } else {
+            setAmountHave("");
+          }
+        } else {
+          setAmountHave("");
+        }
+
         setStockList([]);
         setTotal(0);
+        setRemainingAmount(null);
+        setPaytm("");
+        setCompanies([{ name: "", amount: "" }]);
       }
-    } else {
-      toast.error(res.message || 'Failed to load stock data');
+    } catch (err) {
+      console.error(err);
+      toast.error("Error loading stocks");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
+  // ============================
+  // NEW: searchByDate (kept mostly same)
+  // ============================
+  const searchByDate = async () => {
+    if (!date) return;
+
+    setLoading(true);
+
+    const res = await getStockWithDate(date);
+
+    if (res?.data?.length > 0) {
+      const entry = res.data[0];
+
+      const dayTotal =
+        entry.distributors?.reduce(
+          (sum, d) => sum + Number(d.totalPaid || 0),
+          0
+        ) || 0;
+
+      entry.totalStockExpenses = dayTotal;
+      setTotal(dayTotal);
+      setStockList([entry]); // stock list loaded
+
+      // Fetch all rem amounts
+      const remAll = await getRemAmts();
+
+      if (remAll.success && remAll.data.length > 0) {
+        const selectedDate = new Date(date).toISOString().split("T")[0];
+
+        // MATCH BY DATE (IMPORTANT!)
+        const matched = remAll.data.find(
+          r => new Date(r.date).toISOString().split("T")[0] === selectedDate
+        );
+
+        if (matched) {
+          // Load amountHave
+          setAmountHave(matched.amountHave || "");
+
+          // Load Paytm
+          setPaytm(matched.extraSources?.paytm || "");
+
+          // Load Companies
+          setCompanies(
+            matched.extraSources?.company?.length > 0
+              ? matched.extraSources.company
+              : [{ name: "", amount: "" }]
+          );
+          setRemainingAmount(matched.remainingAmount || 0);
+        } else {
+          // If there's no saved daily balance for that date, try to pre-fill from the most recent previous day's remaining
+          const previous = remAll.data
+            .filter((r) => new Date(r.date) < new Date(selectedDate))
+            .sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+
+          if (previous) {
+            setAmountHave(previous.remainingAmount || "");
+          } else {
+            setAmountHave("");
+          }
+
+          setPaytm("");
+          setCompanies([{ name: "", amount: "" }]);
+          setRemainingAmount(null);
+          toast.error("No saved daily balance found");
+        }
+      } else {
+        setAmountHave("");
+        setPaytm("");
+        setCompanies([{ name: "", amount: "" }]);
+      }
+
+    } else {
+      setStockList([]);
+      setTotal(0);
+      toast.error("No stock found for this date");
+    }
+
+    setLoading(false);
+  };
 
 
 
@@ -164,28 +309,44 @@ const StockEntry = () => {
       return;
     }
 
-    const response = await stockEntry({ date, distributors: valid });
-    if (response.success) {
-      toast.success(response.message);
-      await fetchStocks();
-      setDate('');
-      setDistributors([{ name: '', totalPaid: '' }]);
-      setTotal(0);
-      setTimeout(() => {
-        summaryRef.current?.scrollIntoView({ behavior: 'smooth' });
-      }, 300);
-    } else {
-      toast.error(response.message || 'Error adding stock entry');
+    try {
+      setLoading(true);
+
+      const response = await stockEntry({ date, distributors: valid });
+
+      if (response.success) {
+        toast.success(response.message);
+        toast.info('Tomorrow’s starting amount will be auto-filled from today’s remaining balance.')
+        await fetchStocks();
+        // keep date populated to today (automatic flow)
+        // setDate(''); <-- removed reset to empty so date stays as today
+        setDistributors([{ name: '', totalPaid: '' }]);
+        setTotal(0);
+        setTimeout(() => {
+          summaryRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+      } else {
+        toast.error(response.message || 'Error adding stock entry');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
-
-
-
+  // if (loading) {
+  //   return (
+  //     <div className="fixed inset-0 flex items-center justify-center bg-black">
+  //       <Lottie
+  //         animationData={loading1}
+  //         loop
+  //         style={{ width: 300, height: 300 }}
+  //       />
+  //     </div>
+  //   );
+  // }
+  const totalExpenses = stockList[0]?.totalStockExpenses || 0
   const totalCompanies = companies.reduce((sum, c) => sum + Number(c.amount || 0), 0)
-  const finalTotal = Number(remainingAmount || 0) + Number(paytm || 0) + totalCompanies
-
-
+  const finalTotal = (Number(amountHave || 0) + Number(paytm || 0) + totalCompanies) - totalExpenses
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-4 sm:p-6 md:p-8 font-serif">
@@ -202,17 +363,28 @@ const StockEntry = () => {
         {/* Stock Form */}
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-lg p-4 sm:p-6 space-y-6">
           <div className="grid sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300">
-                Date
-              </label>
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="w-full mt-1 p-3 rounded-md bg-black/30 border border-gray-700 text-white font-mono text-xl"
-              />
+            {/* DATE + SEARCH: kept layout, added Search button */}
+            <div className="flex gap-2 items-end">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-300">
+                  Date
+                </label>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="w-full mt-1 p-3 rounded-md bg-black/30 border border-gray-700 text-white font-mono text-xl"
+                />
+              </div>
+
+              <button
+                onClick={searchByDate}
+                className="px-6 py-4 bg-blue-600 hover:bg-purple-700 rounded-full text-white font-semibold whitespace-nowrap"
+              >
+                <Search />
+              </button>
             </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-300">
                 Total Expense
@@ -228,19 +400,31 @@ const StockEntry = () => {
           {distributors.map((d, i) => (
             <div
               key={i}
-              className="relative grid grid-cols-1 sm:grid-cols-12 gap-3 items-center"
+              className="relative grid grid-cols-1 sm:grid-cols-12 gap-2 items-center"
             >
+
+              <input
+                type="text"
+                placeholder="Invoice #"
+                value={d.inv}
+                onChange={(e) => handleDistributorChange(i, "inv", e.target.value)}
+                className="col-span-2 mt-1 p-3 rounded-md bg-black/30 border border-gray-700 text-white font-mono"
+              />
               {/* Distributor Name Input */}
-              <div className="col-span-5 relative">
+              <div className="col-span-4 relative ">
                 <input
                   type="text"
                   placeholder={`Supplier ${i + 1}`}
                   value={d.name}
                   onChange={(e) => handleDistributorChange(i, "name", e.target.value)}
                   onBlur={() => handleBlur(i)}   // ✅ ensures new distributor auto-saves
-                  onMouseDown={(e) => handleMouseDown(i, e)}
+
                   className="w-full p-3 rounded-md bg-black/30 border border-gray-700 text-white"
                 />
+
+                {/* Invoice Number Input */}
+
+
 
                 {/* ✅ Suggestions Dropdown */}
                 {activeIndex === i && suggestions.length > 0 && (
@@ -257,6 +441,7 @@ const StockEntry = () => {
                   </ul>
                 )}
               </div>
+
 
               {/* Distributor Amount Input */}
               <input
@@ -276,7 +461,6 @@ const StockEntry = () => {
               </button>
             </div>
           ))}
-
 
           <div className="flex flex-col sm:flex-row justify-between gap-4">
             <button
@@ -313,11 +497,10 @@ const StockEntry = () => {
               <table className="w-full text-sm md:text-base border-collapse text-white">
                 <thead>
                   <tr className="bg-purple-800">
-                    <th className="p-3 border border-gray-600">Date</th>
-                    <th className="p-3 border border-gray-600">Suppliers</th>
-                    <th className="p-3 border border-gray-600 text-right">
-                      Amount (₹)
-                    </th>
+                    <th className="p-3 border border-gray-600 w-40">Date</th>
+                    <th className="p-3 border border-gray-600 w-32">Invoice #</th>
+                    <th className="p-3 border border-gray-600 w-64">Suppliers</th>
+                    <th className="p-3 border border-gray-600 text-right w-40">Amount (₹)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -332,16 +515,20 @@ const StockEntry = () => {
                           {i === 0 ? (
                             <td
                               rowSpan={entry.distributors.length + 1}
-                              className="p-3 border border-gray-600 align-top  text-xl text-center font-medium font-mono"
+                              className="p-3 border border-gray-600 w-40 text-center font-mono"
                             >
                               {entry.date?.split("T")[0]}
                             </td>
                           ) : null}
 
+                          <td className="p-3 border border-gray-600 w-32 text-center">
+                            {d.inv || "-"}
+                          </td>
+
                           {/* Supplier Name */}
-                          <td className="p-3 border-t border-b border-l border-gray-600">
+                          <td className="p-3 border border-gray-600 w-64">
                             <div className="flex justify-between items-center group">
-                              <span>{d.name}</span>
+                              <span> {d.name} </span>
                               <div className="hidden group-hover:flex gap-2">
                                 <button
                                   onClick={async () => {
@@ -401,7 +588,7 @@ const StockEntry = () => {
                           </td>
 
                           {/* Amount */}
-                          <td className="p-3 border-t border-b border-r text-xl border-gray-600 text-right font-mono">
+                          <td className="p-3 border border-gray-600 w-40 text-right font-mono">
                             ₹{d.totalPaid}
                           </td>
                         </tr>
@@ -409,10 +596,10 @@ const StockEntry = () => {
 
                       {/* Total row per day */}
                       <tr className="bg-black/30">
-                        <td className="p-3 border-t border-l border-b border-gray-600 font-semibold text-yellow-300">
+                        <td colSpan={2} className="p-3 border border-gray-600 font-semibold text-yellow-300">
                           Total
                         </td>
-                        <td className="p-3 border-t border-r border-b border-gray-600 text-right font-semibold text-yellow-300 font-mono">
+                        <td className="p-3 border border-gray-600 text-right font-semibold text-yellow-300 font-mono">
                           ₹{entry.totalStockExpenses}
                         </td>
                       </tr>
@@ -430,13 +617,13 @@ const StockEntry = () => {
             <div className="bg-white/10 mt-6 rounded-xl p-6 space-y-6">
               <MenuIcon />
               <h3 className="text-lg font-bold text-cyan-400 animate-bounce">
-                💰 Daily Balance & Sources
+                Daily Balance & Sources
               </h3>
 
               {/* Extra Sources */}
               <div className="space-y-4">
                 <h3 className="text-lg font-bold text-purple-400">
-                  ➕ Add Extra Sources
+                  Add Extra Sources
                 </h3>
 
                 {/* Paytm */}
@@ -572,22 +759,21 @@ const StockEntry = () => {
                     }
                   }}
                   className={`px-6 py-3 rounded-full text-lg font-serif flex items-center gap-2 transition-all duration-200 ${isSaved ||
-                      !(
-                        (String(amountHave).trim() !== "") ||
-                        (String(paytm).trim() !== "") ||
-                        companies.some(
-                          (c) =>
-                            String(c.name).trim() !== "" || String(c.amount).trim() !== ""
-                        )
+                    !(
+                      (String(amountHave).trim() !== "") ||
+                      (String(paytm).trim() !== "") ||
+                      companies.some(
+                        (c) =>
+                          String(c.name).trim() !== "" || String(c.amount).trim() !== ""
                       )
-                      ? "bg-blue-600 opacity-50 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-700 text-white"
+                    )
+                    ? "bg-blue-600 opacity-50 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700 text-white"
                     }`}
                 >
                   Save Daily Balance
                 </button>
               </div>
-
 
               {/* Final Total */}
               <hr className="border-gray-600 my-4" />
@@ -596,7 +782,6 @@ const StockEntry = () => {
               </div>
             </div>
           )}
-
 
         </div>
 

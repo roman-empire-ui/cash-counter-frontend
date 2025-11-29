@@ -144,6 +144,23 @@ export const getRemAmts = async () => {
     }
 }
 
+export const getStockWithDate = async(date) => {
+
+    try {
+        const res = await fetch(`${apiUrl}/api/v1/stock/stock-by-date?date=${date}`,{
+            method : 'GET',
+            headers : authHeaders()
+        })
+        const data = await res.json()
+        console.log(data)
+        return data
+        
+    } catch (error) {
+        console.log('error' , error) 
+        return {success : false , message : 'Error occured while fetching the data'}
+    }
+}
+
 
 
 // export const updateRemAmount = async (stockEntryId, amountHave) => {
