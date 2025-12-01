@@ -11,9 +11,12 @@ import {
 } from '../services/stockEntry';
 import { toast } from 'react-toastify';
 import Notification from '../Components/Notification';
-import { Trash2, PlusCircle, FilePlus2, Pencil, Menu, Search } from 'lucide-react';
+import { Trash2, PlusCircle, FilePlus2, Pencil, Menu, Search, Download } from 'lucide-react';
 import { createDistributor, searchDistributor } from '../services/distributor';
 import MenuIcon from '../Components/MenuIcon';
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable"
+
 // import Lottie from 'lottie-react'
 // import loading1 from '../assets/loading1.json'
 
@@ -348,11 +351,55 @@ const StockEntry = () => {
   const totalCompanies = companies.reduce((sum, c) => sum + Number(c.amount || 0), 0)
   const finalTotal = (Number(amountHave || 0) + Number(paytm || 0) + totalCompanies) - totalExpenses
 
+  const generateInvoicePDF = () => {
+    const doc = new jsPDF();
+
+    const invoiceNumber = stockList[0]?._id?.slice(-6).toUpperCase() || "N/A";
+    const invoiceDate = new Date(date).toLocaleDateString("en-IN");
+
+    // Title
+    doc.setFontSize(20);
+    doc.text("Daily Stock Invoice - Srimanasa Supermarket", 14, 15);
+
+    // Invoice info
+    doc.setFontSize(12);
+    doc.text(`Invoice No: INV-${invoiceNumber}`, 14, 30);
+    doc.text(`Date: ${invoiceDate}`, 14, 38);
+
+    // Distributor Table
+    const distributorRows =
+      stockList[0]?.distributors?.map((d, i) => [
+        i + 1,
+        d.inv || "-",
+        d.name,
+        d.totalPaid,
+
+      ]) || [];
+
+    autoTable(doc, {
+      head: [["SI/NO", "Invoice", "Distributor", "Amount Paid"]],
+      body: distributorRows,
+      startY: 50,
+      headStyles: { halign: "center" },
+      bodyStyles: { halign: "center" },
+      tableLineWidth: 0.3,
+      tableLineColor: [0, 0, 0],
+
+      styles: {
+        lineWidth: 0.3,
+        lineColor: [0, 0, 0],
+      },
+    });
+
+    // Save PDF
+    doc.save(`Invoice-${invoiceNumber}.pdf`);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-4 sm:p-6 md:p-8 font-serif">
       <div className="max-w-5xl mx-auto space-y-8">
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-green-400 font-serif animate-bounce">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-green-400 font-serif">
             Daily Stock Payments
           </h1>
           <span className="text-sm text-gray-400">
@@ -482,7 +529,7 @@ const StockEntry = () => {
 
         {/* Stock Summary */}
         <div ref={summaryRef} className="bg-white/5 backdrop-blur-sm rounded-2xl p-6">
-          <h2 className="text-xl font-bold text-emerald-400 mb-4 animate-bounce">
+          <h2 className="text-xl font-bold text-emerald-400 mb-4">
             Stock Summary
           </h2>
 
@@ -616,7 +663,7 @@ const StockEntry = () => {
           {stockList.length > 0 && (
             <div className="bg-white/10 mt-6 rounded-xl p-6 space-y-6">
               <MenuIcon />
-              <h3 className="text-lg font-bold text-cyan-400 animate-bounce">
+              <h3 className="text-lg font-bold text-cyan-400">
                 Daily Balance & Sources
               </h3>
 
@@ -686,7 +733,7 @@ const StockEntry = () => {
 
               {/* Remaining Amount */}
               <div className="space-y-4">
-                <h3 className="text-lg text-emerald-400 animate-bounce">
+                <h3 className="text-lg text-emerald-400">
                   Remaining Amount
                 </h3>
 
@@ -740,6 +787,7 @@ const StockEntry = () => {
                     const payload = {
                       date: stockEntryData.date,
                       amountHave: amount,
+                      remainingAmount: finalTotal,
                       stockEntryId: stockEntryData._id,
                       extraSources: {
                         paytm: Number(paytm) || 0,
@@ -780,6 +828,20 @@ const StockEntry = () => {
               <div className="text-2xl text-yellow-300 font-mono">
                 Final Total: ₹{finalTotal}
               </div>
+              <button
+                onClick={generateInvoicePDF}
+                className="flex items-center gap-2
+                           px-6 py-3 rounded-full mt-4 font-semibold text-white
+                         bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500
+                           shadow-lg transition-all
+                           bg-[length:200%_200%]
+                           hover:opacity-90
+                           animate-[gradientMove_3s_linear_infinite]"
+              >
+                <Download className="w-5 h-5" />
+                Download Invoice PDF
+              </button>
+
             </div>
           )}
 
