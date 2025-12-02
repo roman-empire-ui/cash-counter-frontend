@@ -359,7 +359,7 @@ const StockEntry = () => {
 
     // Title
     doc.setFontSize(20);
-    doc.text("Daily Stock Invoice - Srimanasa Supermarket", 14, 15);
+    doc.text("Daily Stock Invoice - Sri Manasa Supermarket", 14, 15);
 
     // Invoice info
     doc.setFontSize(12);
@@ -396,91 +396,87 @@ const StockEntry = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-4 sm:p-6 md:p-8 font-serif">
-      <div className="max-w-5xl mx-auto space-y-8">
-        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-green-400 font-serif">
+    <div className="min-h-screen bg-gradient-to-br from-[#0f1724] via-[#0b1220] to-[#081229] text-white p-6 font-inter">
+      <div className="max-w-6xl mx-auto space-y-8">
+        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-cyan-400 tracking-tight">
             Daily Stock Payments
           </h1>
-          <span className="text-sm text-gray-400">
+          <span className="text-sm text-slate-400">
             Track suppliers & expenses with ease
           </span>
         </header>
-
+  
         {/* Stock Form */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-lg p-4 sm:p-6 space-y-6">
+        <div className="bg-white/6 backdrop-blur-xl rounded-4xl shadow-2xl p-6 sm:p-8 space-y-6 border border-white/6 transition-all">
           <div className="grid sm:grid-cols-2 gap-4">
-            {/* DATE + SEARCH: kept layout, added Search button */}
-            <div className="flex gap-2 items-end">
+            {/* DATE + SEARCH */}
+            <div className="flex gap-3 items-end">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-300">
+                <label className="block text-sm font-medium text-slate-300">
                   Date
                 </label>
                 <input
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="w-full mt-1 p-3 rounded-md bg-black/30 border border-gray-700 text-white font-mono text-xl"
+                  className="w-full mt-2 p-3 rounded-full bg-white/5 border border-white/10 text-white font-mono text-lg outline-none focus:border-cyan-400 transition"
                 />
               </div>
-
+  
               <button
                 onClick={searchByDate}
-                className="px-6 py-4 bg-blue-600 hover:bg-purple-700 rounded-full text-white font-semibold whitespace-nowrap"
+                className="px-5 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full text-white font-semibold shadow-md hover:scale-[1.02] transition"
+                aria-label="Search by date"
               >
                 <Search />
               </button>
             </div>
-
+  
             <div>
-              <label className="block text-sm font-medium text-gray-300">
+              <label className="block text-sm font-medium text-slate-300">
                 Total Expense
               </label>
               <input
                 readOnly
                 value={`₹${total}`}
-                className="w-full mt-1 p-3 rounded-md bg-black/30 border border-gray-700 text-yellow-400 font-bold font-mono text-xl"
+                className="w-full mt-2 p-3 rounded-full bg-white/5 border border-white/10 text-yellow-300 font-bold font-mono text-lg"
               />
             </div>
           </div>
-
+  
           {distributors.map((d, i) => (
             <div
               key={i}
-              className="relative grid grid-cols-1 sm:grid-cols-12 gap-2 items-center"
+              className="relative grid grid-cols-1 sm:grid-cols-12 gap-3 items-center"
             >
-
               <input
                 type="text"
                 placeholder="Invoice #"
                 value={d.inv}
                 onChange={(e) => handleDistributorChange(i, "inv", e.target.value)}
-                className="col-span-2 mt-1 p-3 rounded-md bg-black/30 border border-gray-700 text-white font-mono"
+                className="col-span-2 mt-1 p-3 rounded-full bg-white/4 border border-white/8 text-white font-mono outline-none focus:border-cyan-400 transition"
               />
+  
               {/* Distributor Name Input */}
-              <div className="col-span-4 relative ">
+              <div className="col-span-4 relative">
                 <input
                   type="text"
                   placeholder={`Supplier ${i + 1}`}
                   value={d.name}
                   onChange={(e) => handleDistributorChange(i, "name", e.target.value)}
-                  onBlur={() => handleBlur(i)}   // ✅ ensures new distributor auto-saves
-
-                  className="w-full p-3 rounded-md bg-black/30 border border-gray-700 text-white"
+                  onBlur={() => handleBlur(i)}
+                  className="w-full p-3 rounded-full bg-white/4 border border-white/8 text-white outline-none focus:border-cyan-400 transition"
                 />
-
-                {/* Invoice Number Input */}
-
-
-
-                {/* ✅ Suggestions Dropdown */}
+  
+                {/* Suggestions Dropdown */}
                 {activeIndex === i && suggestions.length > 0 && (
-                  <ul className="absolute bg-gray-800 border border-gray-700 rounded-md mt-1 w-full z-10 max-h-40 overflow-y-auto">
+                  <ul className="absolute left-0 right-0 mt-2 bg-[#071226] border border-white/8 rounded-lg z-20 max-h-44 overflow-y-auto shadow-lg">
                     {suggestions.map((s, idx) => (
                       <li
                         key={idx}
-                        className="p-2 cursor-pointer hover:bg-gray-600"
-                        onMouseDown={() => selectSuggestion(i, s)} // ✅ fills input when clicked
+                        className="p-2 cursor-pointer hover:bg-white/5"
+                        onMouseDown={() => selectSuggestion(i, s)}
                       >
                         {s}
                       </li>
@@ -488,66 +484,67 @@ const StockEntry = () => {
                   </ul>
                 )}
               </div>
-
-
+  
               {/* Distributor Amount Input */}
               <input
                 type="number"
                 placeholder="Amount ₹"
                 value={d.totalPaid}
                 onChange={(e) => handleDistributorChange(i, "totalPaid", e.target.value)}
-                className="col-span-5 p-3 rounded-md bg-black/30 border border-gray-700 text-white"
+                className="col-span-5 p-3 rounded-full bg-white/4 border border-white/8 text-white font-mono outline-none focus:border-cyan-400 transition"
               />
-
+  
               {/* Remove Distributor Button */}
               <button
                 onClick={() => removeDistributor(i)}
-                className="w-10 h-10 bg-gray-600 hover:bg-red-600 text-white rounded-full flex items-center justify-center"
+                className="w-10 h-10 bg-red-600/90 hover:bg-red-700 rounded-full flex items-center justify-center transition-shadow shadow-red-500/20"
+                aria-label={`Remove supplier ${i + 1}`}
               >
-                <Trash2 className="w-5 h-5" />
+                <Trash2 className="w-4 h-4" />
               </button>
             </div>
           ))}
-
+  
           <div className="flex flex-col sm:flex-row justify-between gap-4">
             <button
               onClick={addDistributor}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 rounded-full text-white cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 bg-emerald-400 hover:bg-emerald-600 rounded-full text-white font-medium shadow-md transition"
             >
               <PlusCircle className="w-5 h-5" />
               Add Supplier
             </button>
+  
             <button
               onClick={submitStockEntry}
-              className="flex items-center gap-2 px-6 py-3 bg-purple-700 hover:bg-purple-800 rounded-full text-white text-lg cursor-pointer"
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 rounded-full text-white text-lg font-semibold shadow-2xl hover:scale-[1.02] transition"
             >
               <FilePlus2 className="w-6 h-6" />
               Submit Entry
             </button>
           </div>
         </div>
-
+  
         {/* Stock Summary */}
-        <div ref={summaryRef} className="bg-white/5 backdrop-blur-sm rounded-2xl p-6">
-          <h2 className="text-xl font-bold text-emerald-400 mb-4">
+        <div ref={summaryRef} className="bg-white/6 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-white/6 shadow-2xl transition">
+          <h2 className="text-2xl font-bold text-cyan-400 mb-4 tracking-tight">
             Stock Summary
           </h2>
-
+  
           {loading ? (
             <div className="animate-pulse space-y-4">
               {[...Array(2)].map((_, i) => (
-                <div key={i} className="h-12 bg-gray-700 rounded-md" />
+                <div key={i} className="h-12 bg-white/4 rounded-xl" />
               ))}
             </div>
           ) : (
-            <div className="overflow-x-auto font-inter">
-              <table className="w-full text-sm md:text-base border-collapse text-white">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm md:text-base border-separate border-spacing-0">
                 <thead>
-                  <tr className="bg-purple-800">
-                    <th className="p-3 border border-gray-600 w-40">Date</th>
-                    <th className="p-3 border border-gray-600 w-32">Invoice #</th>
-                    <th className="p-3 border border-gray-600 w-64">Suppliers</th>
-                    <th className="p-3 border border-gray-600 text-right w-40">Amount (₹)</th>
+                  <tr className="bg-purple-500">
+                    <th className="p-4 border-b border-white/8 text-center w-40">Date</th>
+                    <th className="p-4 border-b border-white/8 text-center w-32">Invoice #</th>
+                    <th className="p-4 border-b border-white/8 text-center w-64">Suppliers</th>
+                    <th className="p-4 border-b border-white/8 text-center w-40">Amount (₹)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -556,37 +553,31 @@ const StockEntry = () => {
                       {entry.distributors.map((d, i) => (
                         <tr
                           key={i}
-                          className="odd:bg-white/5 even:bg-white/10 border-b border-gray-600"
+                          className={`${i % 2 === 0 ? "bg-white/3" : "bg-white/2"} border-b border-white/6`}
                         >
                           {/* Show date only for first distributor row */}
                           {i === 0 ? (
                             <td
                               rowSpan={entry.distributors.length + 1}
-                              className="p-3 border border-gray-600 w-40 text-center font-mono"
+                              className="p-4 border-r border-white/6 w-40 text-center font-mono"
                             >
                               {entry.date?.split("T")[0]}
                             </td>
                           ) : null}
-
-                          <td className="p-3 border border-gray-600 w-32 text-center">
+  
+                          <td className="p-4 border-r border-white/6 w-32 text-center font-mono">
                             {d.inv || "-"}
                           </td>
-
+  
                           {/* Supplier Name */}
-                          <td className="p-3 border border-gray-600 w-64">
+                          <td className="p-4 border-r border-white/6 w-64">
                             <div className="flex justify-between items-center group">
-                              <span> {d.name} </span>
+                              <span>{d.name}</span>
                               <div className="hidden group-hover:flex gap-2">
                                 <button
                                   onClick={async () => {
-                                    const newName = prompt(
-                                      "Edit name:",
-                                      d.name
-                                    );
-                                    const newAmount = prompt(
-                                      "Edit amount:",
-                                      d.totalPaid
-                                    );
+                                    const newName = prompt("Edit name:", d.name);
+                                    const newAmount = prompt("Edit amount:", d.totalPaid);
                                     if (newName && newAmount !== null) {
                                       const res = await updateStock({
                                         stockId: entry._id,
@@ -597,18 +588,17 @@ const StockEntry = () => {
                                       if (res?.success) {
                                         toast.success("Updated!");
                                         const updatedList = stockList.map((s) =>
-                                          s._id === entry._id
-                                            ? res.stockEntry
-                                            : s
+                                          s._id === entry._id ? res.stockEntry : s
                                         );
                                         setStockList(updatedList);
                                       } else toast.error("Update failed");
                                     }
                                   }}
-                                  className="bg-blue-600 hover:bg-blue-800 w-9 h-9 rounded-full flex items-center justify-center"
+                                  className="bg-white/6 hover:bg-white/10 w-9 h-9 rounded-lg flex items-center justify-center transition"
                                 >
-                                  <Pencil className="w-6 h-6" />
+                                  <Pencil className="w-5 h-5 text-white" />
                                 </button>
+  
                                 <button
                                   onClick={async () => {
                                     if (confirm("Are you sure to delete?")) {
@@ -626,27 +616,27 @@ const StockEntry = () => {
                                       }
                                     }
                                   }}
-                                  className="bg-red-600 hover:bg-red-800 w-9 h-9 rounded-full flex items-center justify-center"
+                                  className="bg-red-600/90 hover:bg-red-700 w-9 h-9 rounded-lg flex items-center justify-center transition"
                                 >
-                                  <Trash2 className="w-6 h-6" />
+                                  <Trash2 className="w-5 h-5" />
                                 </button>
                               </div>
                             </div>
                           </td>
-
+  
                           {/* Amount */}
-                          <td className="p-3 border border-gray-600 w-40 text-right font-mono">
+                          <td className="p-4 w-40 text-center font-mono">
                             ₹{d.totalPaid}
                           </td>
                         </tr>
                       ))}
-
+  
                       {/* Total row per day */}
-                      <tr className="bg-black/30">
-                        <td colSpan={2} className="p-3 border border-gray-600 font-semibold text-yellow-300">
+                      <tr className="bg-white/5">
+                        <td colSpan={2} className="p-4  font-semibold text-yellow-300">
                           Total
                         </td>
-                        <td className="p-3 border border-gray-600 text-right font-semibold text-yellow-300 font-mono">
+                        <td className="p-4 text-center font-semibold text-yellow-300 font-mono">
                           ₹{entry.totalStockExpenses}
                         </td>
                       </tr>
@@ -656,23 +646,17 @@ const StockEntry = () => {
               </table>
             </div>
           )}
-
-          {/* Remaining Amount */}
-          {/* Daily Balance Section */}
+  
           {/* Daily Balance Section */}
           {stockList.length > 0 && (
-            <div className="bg-white/10 mt-6 rounded-xl p-6 space-y-6">
+            <div className="bg-white/6 mt-6 rounded-2xl p-6 space-y-6 border border-white/6">
               <MenuIcon />
-              <h3 className="text-lg font-bold text-cyan-400">
-                Daily Balance & Sources
-              </h3>
-
+              <h3 className="text-lg font-bold text-cyan-400">Daily Balance & Sources</h3>
+  
               {/* Extra Sources */}
               <div className="space-y-4">
-                <h3 className="text-lg font-bold text-purple-400">
-                  Add Extra Sources
-                </h3>
-
+                <h3 className="text-lg font-bold text-purple-400">Add Extra Sources</h3>
+  
                 {/* Paytm */}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <input
@@ -680,10 +664,10 @@ const StockEntry = () => {
                     placeholder="Paytm ₹"
                     value={paytm}
                     onChange={(e) => setPaytm(e.target.value)}
-                    className="p-3 rounded-md bg-black/30 border border-gray-700 text-white font-mono"
+                    className="p-3 rounded-full bg-white/4 border border-white/8 text-white font-mono outline-none focus:border-cyan-400 transition"
                   />
                 </div>
-
+  
                 {/* Companies */}
                 {companies.map((c, i) => (
                   <div key={i} className="grid grid-cols-12 gap-3 items-center">
@@ -695,9 +679,9 @@ const StockEntry = () => {
                         const updated = [...companies];
                         updated[i].name = e.target.value;
                         setCompanies(updated);
-                        setIsSaved(false)
+                        setIsSaved(false);
                       }}
-                      className="col-span-6 p-3 rounded-md bg-black/30 border border-gray-700 text-white"
+                      className="col-span-6 p-3 rounded-full bg-white/4 border border-white/8 text-white outline-none focus:border-cyan-400 transition"
                     />
                     <input
                       type="number"
@@ -708,57 +692,54 @@ const StockEntry = () => {
                         updated[i].amount = e.target.value;
                         setCompanies(updated);
                       }}
-                      className="col-span-5 p-3 rounded-md bg-black/30 border border-gray-700 text-white font-mono"
+                      className="col-span-5 p-3 rounded-full bg-white/4 border border-white/8 text-white font-mono outline-none focus:border-cyan-400 transition"
                     />
                     <button
                       onClick={() => {
                         const updated = [...companies];
                         updated.splice(i, 1);
                         setCompanies(updated);
-                        setIsSaved(false)
+                        setIsSaved(false);
                       }}
-                      className="w-8 h-8 bg-gray-600 hover:bg-red-600 rounded-full text-white flex items-center justify-center"
+                      className="w-8 h-8 bg-red-600/90 hover:bg-red-700 rounded-full          text-white flex items-center justify-center transition"
                     >
-                      <Trash2 className="w-5 h-5" />
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 ))}
+  
                 <button
                   onClick={() => setCompanies([...companies, { name: "", amount: "" }])}
-                  className="px-4 py-2 bg-green-600 rounded-full text-white"
+                  className="px-4 py-2 bg-emerald-400 rounded-full text-white font-medium shadow-sm transition"
                 >
                   + Add Company
                 </button>
               </div>
-
+  
               {/* Remaining Amount */}
               <div className="space-y-4">
-                <h3 className="text-lg text-emerald-400">
-                  Remaining Amount
-                </h3>
-
+                <h3 className="text-lg text-emerald-400">Remaining Amount</h3>
+  
                 <div className="grid sm:grid-cols-3 gap-4">
                   <input
                     type="number"
                     placeholder="Cash you have"
                     value={amountHave}
                     onChange={(e) => setAmountHave(e.target.value)}
-                    className="p-3 rounded-md bg-black/30 border border-gray-700 text-2xl text-white font-mono"
+                    className="p-3 rounded-full bg-white/4 border border-white/8 text-2xl text-white font-mono outline-none focus:border-cyan-400 transition"
                   />
                   <input
                     readOnly
                     value={`₹${stockList[0]?.totalStockExpenses || 0}`}
-                    className="p-3 rounded-md bg-black/30 border text-2xl border-gray-700 text-yellow-400 font-mono"
+                    className="p-3 rounded-full bg-white/4 border border-white/8 text-2xl font-mono text-yellow-300 outline-none"
                   />
                 </div>
-
+  
                 {remainingAmount !== null && (
-                  <div className="text-green-400 text-2xl font-mono">
-                    Remaining: ₹{remainingAmount}
-                  </div>
+                  <div className="text-green-400 text-2xl font-sans">Remaining: ₹{remainingAmount}</div>
                 )}
               </div>
-
+  
               {/* Save Button */}
               <div className="flex justify-end">
                 <button
@@ -767,23 +748,20 @@ const StockEntry = () => {
                     !(
                       (String(amountHave).trim() !== "") ||
                       (String(paytm).trim() !== "") ||
-                      companies.some(
-                        (c) =>
-                          String(c.name).trim() !== "" || String(c.amount).trim() !== ""
-                      )
+                      companies.some((c) => String(c.name).trim() !== "" || String(c.amount).trim() !== "")
                     )
                   }
                   onClick={async () => {
                     const stockEntryData = stockList[0];
                     if (!stockEntryData) return toast.error("No stock entry found!");
-
+  
                     const amount = Number(amountHave);
                     if (isNaN(amount)) return toast.error("Enter valid cash amount");
-
+  
                     const expense = stockEntryData.totalStockExpenses || 0;
                     const rem = amount - expense;
                     setRemainingAmount(rem);
-
+  
                     const payload = {
                       date: stockEntryData.date,
                       amountHave: amount,
@@ -797,7 +775,7 @@ const StockEntry = () => {
                         })),
                       },
                     };
-
+  
                     const res = await calRem(payload);
                     if (res.success) {
                       toast.success(res.message || "Daily balance saved successfully!");
@@ -806,51 +784,42 @@ const StockEntry = () => {
                       toast.error(res.message || "Failed to save daily balance");
                     }
                   }}
-                  className={`px-6 py-3 rounded-full text-lg font-serif flex items-center gap-2 transition-all duration-200 ${isSaved ||
+                  className={`px-6 py-3 rounded-full text-lg flex items-center gap-3 font-medium transition-all duration-200 ${
+                    isSaved ||
                     !(
                       (String(amountHave).trim() !== "") ||
                       (String(paytm).trim() !== "") ||
-                      companies.some(
-                        (c) =>
-                          String(c.name).trim() !== "" || String(c.amount).trim() !== ""
-                      )
+                      companies.some((c) => String(c.name).trim() !== "" || String(c.amount).trim() !== "")
                     )
-                    ? "bg-blue-600 opacity-50 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700 text-white"
-                    }`}
+                      ? "bg-slate-600/60 opacity-60 cursor-not-allowed"
+                      : "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg hover:scale-[1.02]"
+                  }`}
                 >
                   Save Daily Balance
                 </button>
               </div>
-
+  
               {/* Final Total */}
-              <hr className="border-gray-600 my-4" />
-              <div className="text-2xl text-yellow-300 font-mono">
-                Final Total: ₹{finalTotal}
-              </div>
+              <hr className="border-white/8 my-4" />
+              <div className="text-2xl text-yellow-300 font-sans">Final Total: ₹{finalTotal}</div>
               <button
                 onClick={generateInvoicePDF}
-                className="flex items-center gap-2
-                           px-6 py-3 rounded-full mt-4 font-semibold text-white
-                         bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500
-                           shadow-lg transition-all
-                           bg-[length:200%_200%]
-                           hover:opacity-90
-                           animate-[gradientMove_3s_linear_infinite]"
+                className="flex items-center gap-3 px-6 py-3 rounded-full mt-4 font-semibold text-white
+                           bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500
+                           shadow-2xl bg-[length:300%_300%] hover:opacity-95 transform transition-all hover:scale-[1.02]"
               >
                 <Download className="w-5 h-5" />
                 Download Invoice PDF
               </button>
-
             </div>
           )}
-
         </div>
-
+  
         <Notification />
       </div>
     </div>
   );
+  
 };
 
 export default StockEntry;
