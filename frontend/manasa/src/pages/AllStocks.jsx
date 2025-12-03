@@ -1,26 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { deleteStock, getStocks, updateStock } from "../services/stockEntry";
+import { deleteStock, getStockByStockRange, getStocks, updateStock } from "../services/stockEntry";
 import { toast } from "react-toastify";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Search, Trash2 } from "lucide-react";
 import Lottie from "lottie-react";
 import loader from '../assets/loader.json'
+import PdfCreator from "../Components/Genpdf";
 
 const AllStocks = () => {
   const [allStocks, setAllStocks] = useState([]);
   const [filteredStocks, setFilteredStocks] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedStock, setSelectedStock] = useState(null);
-
+  const [fromDate, setFromDate] = useState('')
+  const [toDate, setToDate] = useState('')
   // Editing state
   const [editingDistributor, setEditingDistributor] = useState(null);
   const [editValues, setEditValues] = useState({ name: "", totalPaid: "" });
-  const [isLoading , setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const fetchStocks = async () => {
       setIsLoading(true)
       const res = await getStocks();
-      console.log('res' , res)
+      console.log('res', res)
       if (res.success) {
         setAllStocks(res.data);
         setFilteredStocks(res.data);
@@ -45,6 +47,28 @@ const AllStocks = () => {
       setFilteredStocks(filtered);
     }
   }, [search, allStocks]);
+
+  const handleFilterByDate = async () => {
+    if (!fromDate || !toDate) {
+      toast.error("Please select both dates");
+      return;
+    }
+
+    setIsLoading(true);
+
+    const res = await getStockByStockRange(fromDate, toDate);
+
+    console.log("DATE RANGE RESULT", res);
+
+    if (res.success) {
+      setFilteredStocks(res.data);
+      setAllStocks(res.data);
+    } else {
+      toast.error(res.message || "No data found for this range");
+    }
+
+    setIsLoading(false);
+  };
 
   // Save updated distributor
   const handleSaveEdit = async (stockId, distributorId) => {
@@ -173,7 +197,7 @@ const AllStocks = () => {
       console.error(err);
       toast.error("Something went wrong while deleting");
     }
-  }; 
+  };
 
   if (isLoading) {
     return (
@@ -189,6 +213,40 @@ const AllStocks = () => {
       <h1 className="text-4xl animate-pulse font-serif font-bold text-center mb-10 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 tracking-wide">
         Stock History
       </h1>
+
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-center mb-10">
+        <div>
+          <label className="text-gray-300">From Date</label>
+          <input
+            type="date"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
+            className="mt-3 block p-3 rounded-full bg-white/10 text-white border border-white/20"
+          />
+        </div>
+
+        <div>
+          <label className="text-gray-300">To Date</label>
+          <input
+            type="date"
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
+            className="mt-3 block p-3 rounded-full bg-white/10 text-white border border-white/20"
+          />
+          
+        </div>
+
+        <button
+          onClick={handleFilterByDate}
+          className="mt-7 px-6 py-3 bg-purple-600 rounded-full hover:bg-purple-700 transition"
+        >
+          <Search width={25} height={25}/>
+        </button>
+         <PdfCreator data={filteredStocks} />
+
+      </div>
+
+     
 
       {/* Search Bar */}
       <div className="max-w-lg mx-auto mb-10">
@@ -221,6 +279,10 @@ const AllStocks = () => {
               <h2 className="text-2xltext-cyan-300 mb-3">
                 {entry.date?.split("T")[0]}
               </h2>
+              <p className="text-gray-200 ">
+                <span className="font-semibold">Invoice:</span>{" "}
+                {entry.distributors.map((d) => d.inv).join(", ")}
+              </p>
               <p className="text-gray-200 text-base">
                 <span className="font-semibold">Distributors:</span>{" "}
                 {entry.distributors.map((d) => d.name).join(", ")}
@@ -328,7 +390,7 @@ const AllStocks = () => {
                           onClick={() => setEditingDistributor(null)}
                           className="flex-1 py-2 bg-gray-600 rounded-xl hover:bg-gray-700 transition font-serif"
                         >
-                           Cancel
+                          Cancel
                         </button>
                       </div>
                     </>
@@ -339,6 +401,10 @@ const AllStocks = () => {
                       </p>
                       <p className="mt-1 text-2xl text-red-400">
                         <span className="font-medium">Paid:</span> ₹{d.totalPaid}
+                      </p>
+
+                      <p className="mt-1 text-2xl text-yellow-400">
+                        <span className="font-medium">Invoice:</span> #{d.inv}
                       </p>
                       <button
                         onClick={() => {
@@ -367,7 +433,7 @@ const AllStocks = () => {
 
             {/* Footer */}
 
-            
+
             <div className="mt-6 border-t border-purple-500/30 pt-4 text-right">
               <p className="text-2xl font-bold text-pink-400 font-mono">
                 Total Expense: ₹{selectedStock.totalStockExpenses}

@@ -162,6 +162,22 @@ export const getStockWithDate = async(date) => {
 }
 
 
+export const getStockByStockRange = async(fromDate , toDate) => {
+    
+    try {
+        const res = await fetch(`${apiUrl}/api/v1/stock/getDateByRange?fromDate=${fromDate}&toDate=${toDate}`, {
+            method : 'GET',
+            headers : authHeaders()
+        })
+
+        const data = await res.json()
+        return data
+    } catch (error) {
+        console.log('error' , error)
+    }
+}
+
+
 
 // export const updateRemAmount = async (stockEntryId, amountHave) => {
 //     try {
