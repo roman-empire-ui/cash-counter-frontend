@@ -103,7 +103,7 @@ export default function CompanyListFuturistic() {
                 <div className="flex flex-wrap items-center justify-between gap-4">
 
                     <h1 className="text-4xl font-extrabold tracking-widest text-cyan-300 drop-shadow-[0_0_15px_rgba(0,255,255,0.4)]">
-                        COMPANIES REPORT
+                         REPORTS
                     </h1>
 
                     <div className="flex gap-4 items-center">

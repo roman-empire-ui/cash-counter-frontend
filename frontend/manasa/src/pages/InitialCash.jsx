@@ -88,7 +88,7 @@ const InitialCash = () => {
 
           <button
             onClick={() => navigate('/companies-paid-report')}
-            title='Company Reports'
+            title='Reports'
             className="px-5 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition duration-200 font-serif flex items-center gap-2"
           >
             <Building2 size={20} />
