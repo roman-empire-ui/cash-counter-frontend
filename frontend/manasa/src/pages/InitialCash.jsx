@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Lottie from 'lottie-react'
 import loading2 from '../assets/loading2.json'
 import { getInitialCount } from '../services/cashCounter';
+import { Building2 } from "lucide-react";
+
 
 const InitialCash = () => {
   const navigate = useNavigate();
@@ -21,7 +23,7 @@ const InitialCash = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-600 via-indigo-600 to-purple-800 p-6"
-    
+
     >
       <div className="w-full max-w-3xl bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl p-6">
         <h2 className="text-2xl font-bold text-white mb-6 text-center font-serif">
@@ -76,7 +78,7 @@ const InitialCash = () => {
         )}
 
         {/* Back button */}
-        <div className="mt-6 flex justify-center">
+        <div className="mt-6 flex justify-center gap-4">
           <button
             onClick={() => navigate('/cash-counter')}
             className="px-5 py-2 bg-emerald-500 text-white rounded-full animate-pulse hover:bg-emerald-600 transition duration-200 font-serif"
@@ -84,16 +86,18 @@ const InitialCash = () => {
             Back to Opening Balance
           </button>
 
+          <button
+            onClick={() => navigate('/companies-paid-report')}
+            title='Company Reports'
+            className="px-5 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition duration-200 font-serif flex items-center gap-2"
+          >
+            <Building2 size={20} />
+            
+          </button>
+
         </div>
-        
+
       </div>
-      <button
-          onClick={() => navigate('/companies-paid-report')}
-          
-          className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full flex items-center gap-2 animate-glow"
-        >
-          Companies Paid Report
-        </button>
     </div>
   );
 };
