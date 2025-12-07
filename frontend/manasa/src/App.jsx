@@ -19,6 +19,7 @@ import ResetPassword from './pages/PasswordRst';
 import SpeechAssistant from './pages/Speech';
 import MonthlyPaymentSummary from './pages/DashSummary';
 import RemAmts from './pages/RemAmts';
+import CompanySearch from './pages/CompanySearch';
 
 const AppRoutes = () => {
   const { loading } = useContext(GlobalContext);
@@ -44,11 +45,12 @@ const AppRoutes = () => {
         <Route path="/" element={<SplashScreen />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path='/password-reset' element ={<ResetPassword/>}/>
-        <Route path='/speech' element={<SpeechAssistant/>}/>
-        <Route path='/dashboard-summary' element={<MonthlyPaymentSummary/>} />
-        <Route path='/rem-amounts' element={<RemAmts/>}/>
-        
+        <Route path='/password-reset' element={<ResetPassword />} />
+        <Route path='/speech' element={<SpeechAssistant />} />
+        <Route path='/dashboard-summary' element={<MonthlyPaymentSummary />} />
+        <Route path='/rem-amounts' element={<RemAmts />} />
+        <Route path='/companies-paid-report' element={<CompanySearch /> } />
+
 
         {/* Protected Routes */}
         <Route
@@ -60,7 +62,7 @@ const AppRoutes = () => {
           }
         />
 
-    
+
         <Route
           path="/stock-entry"
           element={
@@ -102,6 +104,8 @@ const AppRoutes = () => {
           }
         />
 
+
+
         {/* Catch-all / 404 */}
         <Route path="*" element={<ErrorPage />} />
       </Routes>
@@ -117,7 +121,7 @@ function App() {
         <div>
           <AppRoutes />
           <LogoOverlay />
-          
+
         </div>
       </BrowserRouter>
     </GlobalState>

@@ -397,6 +397,7 @@ const RemainingCash = () => {
               <div className="arrow-down inline-block align-middle"></div> // Loss → Red Down
             ) : null}
           </div>
+          
 
 
           <p className="mt-4 text-sm text-gray-400 text-center">

@@ -59,3 +59,20 @@ export const getInitialCount = async (date) => {
         return { success: false, message: e };
     }
 }
+
+
+export const getDataByRange = async(from , to) => {
+
+    try {
+        const res = await fetch(`${apiUrl}/api/v1/counter/dataByRange?from=${from}&to=${to}`,{
+            method : "GET",
+            ...authHeaders()
+        })
+
+        const data = await res.json()
+        return data
+    } catch (e) {
+        console.log('error' , e)
+        return {success : false , message : e}
+    }
+}
