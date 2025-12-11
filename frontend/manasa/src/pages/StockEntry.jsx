@@ -350,6 +350,7 @@ const StockEntry = () => {
   const totalExpenses = stockList[0]?.totalStockExpenses || 0
   const totalCompanies = companies.reduce((sum, c) => sum + Number(c.amount || 0), 0)
   const finalTotal = (Number(amountHave || 0) + Number(paytm || 0) + totalCompanies) - totalExpenses
+  const remAmount = (Number(amountHave) - totalExpenses)
 
   const generateInvoicePDF = () => {
     const doc = new jsPDF();
@@ -736,7 +737,12 @@ const StockEntry = () => {
                 </div>
   
                 {remainingAmount !== null && (
-                  <div className="text-green-400 text-2xl font-sans">Remaining: ₹{remainingAmount}</div>
+                  
+                  <div className="text-white text-xl font-sans">Remaining Amount With total Expenses: ₹{remAmount}</div>
+                )}
+                {remainingAmount !== null && (
+                  
+                  <div className="text-green-400 text-xl font-sans">Remaining Amount With ExtraSources: ₹{remainingAmount}</div>
                 )}
               </div>
   
@@ -760,12 +766,14 @@ const StockEntry = () => {
   
                     const expense = stockEntryData.totalStockExpenses || 0;
                     const rem = amount - expense;
-                    setRemainingAmount(rem);
+                     const remWithExtra = rem + (Number(paytm) || 0) + companies.reduce((s,c)=> s + Number(c.amount||0),0);
+
+                    setRemainingAmount(remWithExtra);
   
                     const payload = {
                       date: stockEntryData.date,
                       amountHave: amount,
-                      remainingAmount: finalTotal,
+                      remainingAmount: remWithExtra,
                       stockEntryId: stockEntryData._id,
                       extraSources: {
                         paytm: Number(paytm) || 0,
