@@ -28,8 +28,14 @@ const CashCounter = () => {
   const [date, setDate] = useState(tomorrow);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
   const location = useLocation();
+  
+  const secretPassword = import.meta.env.VITE_OPENING_BALANCE_PASSWORD
+  
 
   // ✅ Restore from localStorage
   useEffect(() => {
@@ -129,9 +135,10 @@ const CashCounter = () => {
       .split("T")[0];
 
     if (date === today) {
-      toast.error("⚠️ You didn't change the date! Please select tomorrow's date before saving.");
+      setShowPasswordModal(true);
       return;
     }
+
 
     if (date !== tomorrowDate) {
       setConfirmAction(() => saveData);
@@ -142,13 +149,24 @@ const CashCounter = () => {
     saveData();
   };
 
+  const verifyPasswordAndSave = () => {
+    if (password === secretPassword) {
+      setShowPasswordModal(false);
+      setPassword("");
+      saveData();
+    } else {
+      toast.error("❌ Incorrect password");
+    }
+  };
+
+
   const saveData = async () => {
     setShowConfirmModal(false);
     setLoading(true);
     try {
       const res = await cashCount(date, notes, coins);
       if (res.success) {
-        toast.success( res.message || `Opening balance for ${date} saved successfully.`);
+        toast.success(res.message || `Opening balance for ${date} saved successfully.`);
         localStorage.removeItem("cashCounterData");
         setNotes(denominations.notes.map((d) => ({ denomination: d, count: 0 })));
         setCoins(denominations.coins.map((d) => ({ denomination: d, count: 0 })));
@@ -356,6 +374,61 @@ const CashCounter = () => {
             </motion.div>
           </motion.div>
         )}
+
+        {showPasswordModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 200 }}
+              className="bg-gray-900 border border-purple-500/40 rounded-2xl p-8 max-w-md w-[90%] shadow-2xl text-center"
+            >
+              <h2 className="text-2xl font-bold text-white mb-3">
+                Admin Authorization
+              </h2>
+
+              <p className="text-gray-400 mb-5">
+                Saving opening balance for{" "}
+                <span className="text-purple-400 font-semibold">today</span> requires
+                password verification.
+              </p>
+
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter secret password"
+                className="w-full mb-6 px-4 py-2 rounded-lg bg-gray-800 border border-gray-600 text-white focus:ring-2 focus:ring-purple-500 outline-none"
+              />
+
+              <div className="flex justify-center gap-4">
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={verifyPasswordAndSave}
+                  className="px-6 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold hover:opacity-90"
+                >
+                  Verify & Save
+                </motion.button>
+
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    setShowPasswordModal(false);
+                    setPassword("");
+                  }}
+                  className="px-6 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700"
+                >
+                  Cancel
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
 
         <Notification />
       </motion.div>

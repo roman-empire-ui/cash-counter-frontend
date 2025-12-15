@@ -132,7 +132,7 @@ const StockEntry = () => {
             setCompanies(
               rem.data.extraSources?.company?.length > 0
                 ? rem.data.extraSources.company
-                : [{ name: "", amount: "" }]
+                : [{ name: "", amount: "" }]  
             );
           } else {
             // If there's no saved rem for today, try to fallback to the latest previous remainingAmount
