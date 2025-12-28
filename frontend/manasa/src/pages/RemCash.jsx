@@ -6,7 +6,7 @@ import { saveRemCash, getRemCash } from "../services/actualCash";
 import Lottie from "lottie-react";
 import loading2 from "../assets/loading2.json"; // Lottie animation
 import Notification from "../Components/Notification";
-import { useNavigate , useLocation } from "react-router-dom";
+import { useNavigate  } from "react-router-dom";
 
 // Default denominations
 const defaultNotes = [500, 200, 100, 50, 20, 10].map((denom) => ({
@@ -37,7 +37,7 @@ const RemainingCash = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate()
-  const location = useLocation()
+  // const location = useLocation()
   // merge notes/coins from backend into defaults
   const mergeWithDefaults = (saved = [], defaults = []) =>
     defaults.map((d) => {
@@ -51,27 +51,7 @@ const RemainingCash = () => {
       paidAmount: Number(c.paidAmount ?? c.paid ?? c.amount ?? 0),
     }));
 
-    useEffect(() => {
-      fetchLatest();
-    }, []);
-  
-    // 2️⃣ Refresh when tab becomes active
-    useEffect(() => {
-      const handleVisibilityChange = () => {
-        if (document.visibilityState === "visible") {
-          fetchLatest();
-        }
-      };
-  
-      document.addEventListener("visibilitychange", handleVisibilityChange);
-      return () =>
-        document.removeEventListener("visibilitychange", handleVisibilityChange);
-    }, []);
-  
-    // 3️⃣ Refresh when navigating back to this page
-    useEffect(() => {
-      fetchLatest();
-    }, [location.pathname]);
+   
 
   // live calculation
   useEffect(() => {
