@@ -32,7 +32,7 @@ const StockEntry = () => {
   const [loading, setLoading] = useState(true);
   const [paytm, setPaytm] = useState('')
   const [companies, setCompanies] = useState([{ name: '', amount: '' }])
-  const [isSaved, setIsSaved] = useState(false)
+  // const [isSaved, setIsSaved] = useState(false)
   const summaryRef = useRef(null);
 
   useEffect(() => {
@@ -680,7 +680,7 @@ const StockEntry = () => {
                         const updated = [...companies];
                         updated[i].name = e.target.value;
                         setCompanies(updated);
-                        setIsSaved(false);
+                       
                       }}
                       className="col-span-6 p-3 rounded-full bg-white/4 border border-white/8 text-white outline-none focus:border-cyan-400 transition"
                     />
@@ -700,7 +700,7 @@ const StockEntry = () => {
                         const updated = [...companies];
                         updated.splice(i, 1);
                         setCompanies(updated);
-                        setIsSaved(false);
+                        
                       }}
                       className="w-8 h-8 bg-red-600/90 hover:bg-red-700 rounded-full          text-white flex items-center justify-center transition"
                     >
@@ -749,14 +749,7 @@ const StockEntry = () => {
               {/* Save Button */}
               <div className="flex justify-end">
                 <button
-                  disabled={
-                    isSaved ||
-                    !(
-                      (String(amountHave).trim() !== "") ||
-                      (String(paytm).trim() !== "") ||
-                      companies.some((c) => String(c.name).trim() !== "" || String(c.amount).trim() !== "")
-                    )
-                  }
+                  
                   onClick={async () => {
                     const stockEntryData = stockList[0];
                     if (!stockEntryData) return toast.error("No stock entry found!");
@@ -787,20 +780,14 @@ const StockEntry = () => {
                     const res = await calRem(payload);
                     if (res.success) {
                       toast.success(res.message || "Daily balance saved successfully!");
-                      setIsSaved(true);
+                      
                     } else {
                       toast.error(res.message || "Failed to save daily balance");
                     }
                   }}
                   className={`px-6 py-3 rounded-full text-lg flex items-center gap-3 font-medium transition-all duration-200 ${
-                    isSaved ||
-                    !(
-                      (String(amountHave).trim() !== "") ||
-                      (String(paytm).trim() !== "") ||
-                      companies.some((c) => String(c.name).trim() !== "" || String(c.amount).trim() !== "")
-                    )
-                      ? "bg-slate-600/60 opacity-60 cursor-not-allowed"
-                      : "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg hover:scale-[1.02]"
+                    
+                   "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg hover:scale-[1.02]"
                   }`}
                 >
                   Save Daily Balance
