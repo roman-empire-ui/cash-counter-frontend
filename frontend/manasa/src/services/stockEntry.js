@@ -129,10 +129,10 @@ export const getRemAmt = async (stockEntryId) => {
     }
 }
 
-export const getRemAmts = async () => {
+export const getRemAmts = async (from , to) => {
 
     try {
-        const res = await fetch(`${apiUrl}/api/v1/stock/get-rem-amounts`, {
+        const res = await fetch(`${apiUrl}/api/v1/stock/get-rem-amounts?from=${from}&to=${to}`, {
             method: 'GET',
             headers: authHeaders()
         })
