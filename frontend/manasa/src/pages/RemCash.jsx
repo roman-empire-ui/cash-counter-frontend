@@ -6,7 +6,9 @@ import { saveRemCash, getRemCash } from "../services/actualCash";
 import Lottie from "lottie-react";
 import loading2 from "../assets/loading2.json"; // Lottie animation
 import Notification from "../Components/Notification";
-import { useNavigate  } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { getTodayLossSession } from "../services/aiLearning";
+import LossAIModal from "../Components/AiQuest";
 
 // Default denominations
 const defaultNotes = [500, 200, 100, 50, 20, 10].map((denom) => ({
@@ -35,6 +37,10 @@ const RemainingCash = () => {
   const [cash, setCash] = useState(0);
   const [finalTotal, setFinalTotal] = useState(0);
   const [loading, setLoading] = useState(false);
+  // Loss AI modal state
+  const [showLossAI, setShowLossAI] = useState(false);
+  const [lossSessionId, setLossSessionId] = useState(null);
+
 
   const navigate = useNavigate()
   // const location = useLocation()
@@ -51,7 +57,7 @@ const RemainingCash = () => {
       paidAmount: Number(c.paidAmount ?? c.paid ?? c.amount ?? 0),
     }));
 
-   
+
 
   // live calculation
   useEffect(() => {
@@ -184,18 +190,35 @@ const RemainingCash = () => {
         posibleOnlineAmount: Number(posibleOnlineAmount),
         otherPayments: Number(otherPayments),
       };
+
       const res = await saveRemCash(payload);
+
       if (res?.success) {
         toast.success(res.message || "Saved successfully");
-        
+
         await fetchLatest();
-      } else toast.error("Error saving remaining cash");
-    } catch {
+
+        // ✅ AUTO CHECK LOSS SESSION AFTER SAVE
+        if (difference > 0) {
+          const normalizedDate = new Date(date).toISOString().split("T")[0];
+          const data = await getTodayLossSession(normalizedDate);
+
+          if (data?.exists && data.sessionId) {
+            setLossSessionId(data.sessionId);
+            setShowLossAI(true);
+          }
+        }
+      } else {
+        toast.error("Error saving remaining cash");
+      }
+    } catch (err) {
       toast.error("Error saving remaining cash");
+      console.error(err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
+
 
   const disableScroll = (e) => e.target.blur();
 
@@ -204,6 +227,8 @@ const RemainingCash = () => {
     0
   );
   const difference = Number(posibleOfflineAmount || 0) - Number(finalTotal || 0);
+ 
+
   const overAllSale = Number(posibleOfflineAmount || 0) + Number(posibleOnlineAmount);
   const cashTotal = Number(cash || 0) + Number(companyPaidTotal || 0);
   const overallCashTotal = cashTotal + Number(paytm || 0) + Number(card || 0);
@@ -212,6 +237,27 @@ const RemainingCash = () => {
     if (value === null || value === undefined || isNaN(value)) return "0";
     return value.toLocaleString("en-IN");
   };
+
+
+  // const startLossAI = async () => {
+  //   try {
+  //     const normalizedDate = new Date(date).toISOString().split("T")[0];
+  //     const data = await getTodayLossSession(normalizedDate);
+
+  //     if (!data?.exists || !data.sessionId) {
+  //       toast.info("No loss session found. Please save entry first.");
+  //       return;
+  //     }
+
+  //     setLossSessionId(data.sessionId);
+  //     setShowLossAI(true);
+  //   } catch (err) {
+  //     toast.error("Failed to start loss analysis");
+  //     console.error(err);
+  //   }
+  // };
+
+
 
   return (
     <div className="h-screen w-full bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white flex flex-col relative"
@@ -400,7 +446,7 @@ const RemainingCash = () => {
               <div className="arrow-down inline-block align-middle"></div> // Loss → Red Down
             ) : null}
           </div>
-          
+
 
 
           <p className="mt-4 text-sm text-gray-400 text-center">
@@ -414,16 +460,34 @@ const RemainingCash = () => {
           </p>
         </div>
 
+        <div className="mt-6 flex flex-wrap items-center gap-3 justify-end">
+
         <button
-          onClick={handleSubmit}
-          disabled={loading}
-          className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full flex items-center gap-2 animate-glow"
-        >
-          {loading && <Loader2 className="animate-spin" size={18} />}
-          {loading ? "Saving..." : "Save Entry"}
-        </button>
+            onClick={handleSubmit}
+            disabled={loading}
+            className="px-6 py-2 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center gap-2 disabled:opacity-50 animate-glow"
+          >
+            {loading && <Loader2 className="animate-spin" size={18} />}
+            {loading ? "Saving..." : "Save Entry"}
+          </button>
+
+
+        
+        </div>
+
+
+
       </footer>
 
+      {showLossAI && lossSessionId && (
+        <LossAIModal
+          sessionId={lossSessionId}
+          onClose={() => {
+            setShowLossAI(false);
+            setLossSessionId(null);
+          }}
+        />
+      )}
 
       <Notification />
     </div>
