@@ -1,5 +1,7 @@
 // src/components/RemainingCash.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import anime from "animejs";
+
 import { toast } from "react-toastify";
 import { Loader2, Search, RefreshCw, PlusCircle, Trash2 } from "lucide-react";
 import { saveRemCash, getRemCash } from "../services/actualCash";
@@ -9,6 +11,7 @@ import Notification from "../Components/Notification";
 import { useNavigate } from "react-router-dom";
 import { getTodayLossSession } from "../services/aiLearning";
 import LossAIModal from "../Components/AiQuest";
+
 
 // Default denominations
 const defaultNotes = [500, 200, 100, 50, 20, 10].map((denom) => ({
@@ -21,6 +24,10 @@ const defaultCoins = [5, 2, 1].map((denom) => ({
 }));
 
 const RemainingCash = () => {
+  const containerRef = useRef(null);
+  const finalTotalRef = useRef(null);
+  const differenceRef = useRef(null);
+  const saveBtnRef = useRef(null);
   const [date, setDate] = useState(() => new Date().toISOString().split("T")[0]);
   const [notes, setNotes] = useState(defaultNotes);
   const [coins, setCoins] = useState(defaultCoins);
@@ -45,6 +52,18 @@ const RemainingCash = () => {
   const navigate = useNavigate()
   // const location = useLocation()
   // merge notes/coins from backend into defaults
+
+  useEffect(() => {
+    anime({
+      targets: containerRef.current.querySelectorAll(".animate-section"),
+      translateY: [40, 0],
+      opacity: [0, 1],
+      delay: anime.stagger(120),
+      duration: 800,
+      easing: "easeOutExpo",
+    });
+  }, []);
+
   const mergeWithDefaults = (saved = [], defaults = []) =>
     defaults.map((d) => {
       const found = saved.find((s) => s.denomination === d.denomination);
@@ -172,7 +191,36 @@ const RemainingCash = () => {
     setCompanies(u);
   };
 
+
+  useEffect(() => {
+    anime({
+      targets: { value: 0 },
+      value: finalTotal,
+      round: 1,
+      duration: 1000,
+      easing: "easeOutExpo",
+      update: (anim) => {
+        if (finalTotalRef.current) {
+          finalTotalRef.current.innerText =
+            Number(anim.animations[0].currentValue).toLocaleString("en-IN");
+        }
+      },
+    });
+  }, [finalTotal]);
+
+  // =========================
+  // DIFFERENCE COUNTER ANIMATION
+  // =========================
+ 
+
+
   const handleSubmit = async () => {
+    anime({
+      targets: saveBtnRef.current,
+      scale: [1, 0.9, 1],
+      duration: 300,
+      easing: "easeInOutQuad",
+    });
     setLoading(true);
 
     try {
@@ -256,11 +304,25 @@ const RemainingCash = () => {
   //     console.error(err);
   //   }
   // };
-
+  useEffect(() => {
+    anime({
+      targets: { value: 0 },
+      value: difference,
+      round: 1,
+      duration: 900,
+      easing: "easeOutExpo",
+      update: (anim) => {
+        if (differenceRef.current) {
+          differenceRef.current.innerText =
+            Number(anim.animations[0].currentValue).toLocaleString("en-IN");
+        }
+      },
+    });
+  }, [difference]);
 
 
   return (
-    <div className="h-screen w-full bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white flex flex-col relative"
+    <div ref={containerRef} className="h-screen w-full bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white flex flex-col relative"
 
     >
       {/* Lottie overlay for saving/fetching */}
@@ -273,11 +335,11 @@ const RemainingCash = () => {
         </div>
       )}
 
-      <header className="p-4 border-b border-white/20 text-center">
+      <header className="p-4 border-b border-white/20 text-center animate-section">
         <h2 className="text-2xl font-bold">Remaining Cash (Taken Home)</h2>
       </header>
 
-      <main className="flex-1 overflow-y-auto scroll-thin-black px-6 py-4 space-y-6">
+      <main className="flex-1 overflow-y-auto scroll-thin-black px-6 py-4 space-y-6 animate-section">
         <div className="flex gap-2">
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
             className="flex-1 px-3 py-2 rounded-lg bg-white/20 text-white outline-none border border-white/30 focus:ring-2 focus:ring-blue-400" />
@@ -429,9 +491,15 @@ const RemainingCash = () => {
           <div className="text-yellow-400 text-lg">Company Paid: ₹{formatAmount(companyPaidTotal)}</div>
           <div className="text-yellow-300 text-lg">Total cash & company: ₹{formatAmount(cashTotal)}</div>
           <div className="text-green-400 text-lg">Overall Cash Total: ₹{formatAmount(overallCashTotal)}</div>
-          <div className="text-green-400 text-lg">Final Total(-OPB): ₹{formatAmount(finalTotal)}</div>
+          <div className="text-green-400 text-xl font-semibold">
+          Final Total(-OPB): ₹
+          <span ref={finalTotalRef}>0</span>
+        </div>
           <div className="text-green-300 text-lg">Overall Sales: ₹{formatAmount(overAllSale)}</div>
-          <div className="text-blue-400 text-lg">Difference: ₹{formatAmount(difference)}</div>
+          <div className="text-blue-400 text-xl font-semibold">
+          Difference: ₹
+          <span ref={differenceRef}>0</span>
+        </div>
 
           <div
             className={`flex items-center gap-2 text-xl ${difference < 0 ? "text-green-400" : difference > 0 ? "text-red-400" : "text-yellow-400"
@@ -463,6 +531,7 @@ const RemainingCash = () => {
         <div className="mt-6 flex flex-wrap items-center gap-3 justify-end">
 
         <button
+            ref={saveBtnRef}
             onClick={handleSubmit}
             disabled={loading}
             className="px-6 py-2 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center gap-2 disabled:opacity-50 animate-glow"
