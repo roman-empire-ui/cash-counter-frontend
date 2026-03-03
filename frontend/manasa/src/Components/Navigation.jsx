@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Home, Package2, CreditCard, PackageCheckIcon, DoorOpen } from 'lucide-react'
+import { Home, Package2, CreditCard, PackageCheckIcon, DoorOpen, Users } from 'lucide-react'
 import { GlobalContext } from '../context/globalContext'
 
 
@@ -14,7 +14,8 @@ const Navigation = () => {
     { icon: Home, label: 'Home', path: '/home' },
     { path: '/stock-entry', icon: Package2, label: 'Stock Entry' },
     { path: '/cash-summary', icon: CreditCard, label: 'Cash Counter' },
-    { path: '/all-Stocks', icon: PackageCheckIcon, label: 'All Stocks' }
+    { path: '/all-Stocks', icon: PackageCheckIcon, label: 'All Stocks' },
+    {path : '/manage', icon:Users, label:'Manage'}
   ]
 
   const hanLogOut = () => {

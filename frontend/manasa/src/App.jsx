@@ -20,6 +20,8 @@ import SpeechAssistant from './pages/Speech';
 import MonthlyPaymentSummary from './pages/DashSummary';
 import RemAmts from './pages/RemAmts';
 import CompanySearch from './pages/CompanySearch';
+import CreateEmployee from './pages/Employees';
+import AttendancePage from './pages/Attendance';
 
 const AppRoutes = () => {
   const { loading } = useContext(GlobalContext);
@@ -49,7 +51,9 @@ const AppRoutes = () => {
         <Route path='/speech' element={<SpeechAssistant />} />
         <Route path='/dashboard-summary' element={<MonthlyPaymentSummary />} />
         <Route path='/rem-amounts' element={<RemAmts />} />
-        <Route path='/companies-paid-report' element={<CompanySearch /> } />
+        <Route path='/companies-paid-report' element={<CompanySearch />} />
+        <Route path='/Attendance' element={<AttendancePage />} />
+
 
 
         {/* Protected Routes */}
@@ -58,6 +62,15 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute>
               <Home />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/manage"
+          element={
+            <ProtectedRoute>
+              <CreateEmployee />
             </ProtectedRoute>
           }
         />
