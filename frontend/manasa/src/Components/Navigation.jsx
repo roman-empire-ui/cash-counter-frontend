@@ -15,7 +15,7 @@ const Navigation = () => {
     { path: '/stock-entry', icon: Package2, label: 'Stock Entry' },
     { path: '/cash-summary', icon: CreditCard, label: 'Cash Counter' },
     { path: '/all-Stocks', icon: PackageCheckIcon, label: 'All Stocks' },
-    {path : '/manage', icon:Users, label:'Manage'}
+    {path : '/manage', icon:Users, label:'Manage Staff'}
   ]
 
   const hanLogOut = () => {

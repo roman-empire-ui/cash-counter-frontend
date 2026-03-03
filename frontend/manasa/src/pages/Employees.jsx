@@ -148,7 +148,7 @@ const EmployeePage = () => {
                transition-all duration-300 
                tracking-wider"
           >
-            ⚡ Attendance
+           Attendance
           </button>
 
           {/* Your existing content here */}

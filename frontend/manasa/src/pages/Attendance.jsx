@@ -109,7 +109,7 @@ const AttendancePage = () => {
       <div className="max-w-5xl mx-auto bg-black/60 p-8 rounded-2xl border border-purple-500/30 shadow-[0_0_40px_#a855f7]">
 
         <h1 className="text-3xl text-purple-400 text-center mb-6 font-bold">
-          ⚡ Cyber Attendance Panel
+          Attendance Panel
         </h1>
 
         {/* ================= FORM ================= */}
