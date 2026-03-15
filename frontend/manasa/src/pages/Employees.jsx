@@ -47,7 +47,7 @@ const EmployeePage = () => {
       setFormData({
         ...formData,
         role: value,
-        allowedWeekOffs: 0,
+        allowedWeekOffs: 1,
       });
       return;
     }
