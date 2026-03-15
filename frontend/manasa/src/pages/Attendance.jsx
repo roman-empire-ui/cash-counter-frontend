@@ -6,12 +6,15 @@ import {
   updateAttendance,
 } from "../services/attendance.js";
 import { getAllEmployees } from "../services/employeeService.js";
+import Lottie from "lottie-react";
+import attendance from "../assets/attendance.json";
 
 const AttendancePage = () => {
   const [employees, setEmployees] = useState([]);
   const [records, setRecords] = useState([]);
   const [summary, setSummary] = useState(null);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     employeeId: "",
@@ -33,7 +36,6 @@ const AttendancePage = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // If employee changes → clear summary + records
     if (name === "employeeId") {
       setSummary(null);
       setRecords([]);
@@ -57,7 +59,7 @@ const AttendancePage = () => {
     try {
       await markAttendance(formData);
       alert("⚡ Attendance Marked Successfully");
-      fetchMonthData(); // refresh after marking
+      fetchMonthData();
     } catch (err) {
       setError(err.message);
     }
@@ -66,6 +68,8 @@ const AttendancePage = () => {
   /* ================= FETCH MONTH DATA ================= */
   const fetchMonthData = async () => {
     try {
+      setLoading(true);
+
       const selected = new Date(formData.date);
       const month = selected.getMonth() + 1;
       const year = selected.getFullYear();
@@ -86,6 +90,8 @@ const AttendancePage = () => {
       setRecords(recordData.data);
     } catch (err) {
       setError("Failed to fetch monthly data", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -98,7 +104,7 @@ const AttendancePage = () => {
         newStatus,
       });
 
-      fetchMonthData(); // refresh after update
+      fetchMonthData();
     } catch (err) {
       setError(err.message);
     }
@@ -165,8 +171,20 @@ const AttendancePage = () => {
           </div>
         )}
 
+        {/* ================= LOADING ANIMATION ================= */}
+        {loading && (
+          <div className="flex flex-col items-center justify-center py-10">
+            <div className="w-20 h-20">
+              <Lottie animationData={attendance} loop />
+            </div>
+            <p className="text-purple-400 text-sm mt-4">
+              Loading Attendance...
+            </p>
+          </div>
+        )}
+
         {/* ================= SUMMARY ================= */}
-        {summary && (
+        {!loading && summary && (
           <div className="mt-8 grid grid-cols-4 gap-4 text-center text-lg">
             <div className="p-4 bg-purple-900/30 rounded-xl shadow-[0_0_15px_#9333ea]">
               Present: {summary.presentDays}
@@ -184,7 +202,7 @@ const AttendancePage = () => {
         )}
 
         {/* ================= RECORD TABLE ================= */}
-        {records.length > 0 && (
+        {!loading && records.length > 0 && (
           <div className="mt-8 overflow-x-auto">
             <table className="w-full text-left border border-purple-500/30">
               <thead>
@@ -194,13 +212,19 @@ const AttendancePage = () => {
                   <th className="p-3">Update</th>
                 </tr>
               </thead>
+
               <tbody>
                 {records.map((rec) => (
-                  <tr key={rec._id} className="border-t border-purple-500/20 hover:bg-purple-900/20">
+                  <tr
+                    key={rec._id}
+                    className="border-t border-purple-500/20 hover:bg-purple-900/20"
+                  >
                     <td className="p-3">
                       {new Date(rec.date).toLocaleDateString()}
                     </td>
+
                     <td className="p-3">{rec.status}</td>
+
                     <td className="p-3">
                       <select
                         defaultValue={rec.status}
@@ -215,6 +239,7 @@ const AttendancePage = () => {
                         <option value="LossOfPay">LossOfPay</option>
                       </select>
                     </td>
+
                   </tr>
                 ))}
               </tbody>
